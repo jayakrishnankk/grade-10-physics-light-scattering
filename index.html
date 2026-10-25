@@ -1,0 +1,2292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atmospheric Light Scattering: Why is the Sky Blue & Sunsets Red?</title>
+  <meta name="description" content="An interactive Grade 10 physics simulation explaining Rayleigh scattering, why the sky is blue, and why sunsets turn red and orange.">
+  <style>
+    /* ==========================================================================
+       1. CSS CUSTOM PROPERTIES & DESIGN TOKENS
+       Modern EdTech Dark Theme with vibrant wavelength accents
+       ========================================================================== */
+    :root {
+      --bg-space: #070b19;
+      --bg-surface: #0e172e;
+      --bg-surface-elevated: #162244;
+      --bg-card: rgba(22, 34, 68, 0.7);
+      --border-subtle: rgba(255, 255, 255, 0.1);
+      --border-accent: rgba(56, 189, 248, 0.35);
+
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      /* Physics Spectrum Accents */
+      --blue-wavelength: #38bdf8;
+      --blue-glow: rgba(56, 189, 248, 0.5);
+      --red-wavelength: #ef4444;
+      --red-glow: rgba(239, 68, 68, 0.5);
+      --sunset-orange: #f97316;
+      --solar-yellow: #fbbf24;
+      --violet-wavelength: #a855f7;
+      --green-accent: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.4);
+
+      /* Typography */
+      --font-stack: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+
+      /* Controls & Sliders */
+      --slider-track-size: 0.5rem;
+      --slider-thumb-size: 1.25rem;
+      --slider-track-radius: 999px;
+      --slider-thumb-radius: 50%;
+      --slider-track-color: #334155;
+      --slider-fill-color: var(--blue-wavelength);
+      --slider-thumb-color: #ffffff;
+      --slider-direction: to right;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+
+      --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-subtle);
+      --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.25);
+    }
+
+    /* ==========================================================================
+       2. RESET & BASE STYLES
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-space);
+      background-image: 
+        radial-gradient(ellipse at 20% 0%, rgba(30, 58, 138, 0.35) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, rgba(180, 83, 9, 0.2) 0%, transparent 60%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-family: var(--font-stack);
+      line-height: 1.6;
+      font-size: 16px;
+      padding: 1.5rem 1rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* ==========================================================================
+       3. HEADER & HERO SECTION
+       ========================================================================== */
+    header.hero {
+      text-align: center;
+      padding: 2.5rem 1.5rem 1.5rem;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header.hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--blue-wavelength), var(--sunset-orange), transparent);
+    }
+
+    .grade-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--blue-wavelength);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.35rem 1rem;
+      border-radius: var(--radius-full);
+      margin-bottom: 1rem;
+    }
+
+    h1.hero-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg, #ffffff 40%, var(--blue-wavelength) 80%, var(--sunset-orange) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.hero-subtitle {
+      color: var(--text-muted);
+      font-size: clamp(1rem, 1.8vw, 1.15rem);
+      max-width: 780px;
+      margin: 0 auto 1.5rem;
+    }
+
+    /* Conceptual Intro Grid */
+    .intro-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+      text-align: left;
+    }
+
+    .concept-card {
+      background: rgba(14, 23, 46, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .concept-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-accent);
+    }
+
+    .concept-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .concept-card p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .formula-tag {
+      font-family: var(--font-mono);
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--blue-wavelength);
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      display: inline-block;
+      margin-top: 0.4rem;
+    }
+
+    /* ==========================================================================
+       4. MAIN SIMULATION LAYOUT (SPLIT SCREEN)
+       ========================================================================== */
+    .sim-layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 1.75rem;
+      align-items: start;
+    }
+
+    @media (max-width: 992px) {
+      .sim-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Column: Interactive Controls & Telemetry */
+    .sim-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.75rem;
+    }
+
+    .card-title .badge {
+      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-full);
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Control Groups */
+    .control-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .control-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .control-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.5rem;
+    }
+
+    .control-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .control-value {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--blue-wavelength);
+      background: rgba(56, 189, 248, 0.1);
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Presets Button Row */
+    .preset-btn-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+    }
+
+    .btn-preset {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.45rem 0.5rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-preset:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-preset.active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--blue-wavelength);
+      color: #ffffff;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+    }
+
+    /* Segmented Condition Buttons */
+    .segmented-control {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.25rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      gap: 0.25rem;
+    }
+
+    .segmented-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.5rem 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .segmented-btn:hover {
+      color: #fff;
+    }
+
+    .segmented-btn.active {
+      background: var(--bg-surface-elevated);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-accent);
+    }
+
+    /* Range Sliders */
+    input[type="range"] {
+      --slider-progress: 50%;
+      appearance: none;
+      -webkit-appearance: none;
+      width: 100%;
+      height: 2.25rem;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: var(--slider-track-size);
+      border: 0;
+      border-radius: var(--slider-track-radius);
+      background: linear-gradient(
+        var(--slider-direction),
+        var(--slider-fill-color) var(--slider-progress),
+        var(--slider-track-color) var(--slider-progress)
+      );
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      -webkit-appearance: none;
+      width: var(--slider-thumb-size);
+      height: var(--slider-thumb-size);
+      margin-top: calc((var(--slider-track-size) - var(--slider-thumb-size)) / 2);
+      border: 2px solid var(--slider-fill-color);
+      border-radius: var(--slider-thumb-radius);
+      background: #ffffff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      transition: transform 0.15s ease;
+    }
+
+    input[type="range"]:active::-webkit-slider-thumb {
+      transform: scale(1.15);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: var(--slider-track-size);
+      border: 0;
+      border-radius: var(--slider-track-radius);
+      background: var(--slider-track-color);
+    }
+
+    input[type="range"]::-moz-range-progress {
+      height: var(--slider-track-size);
+      border-radius: var(--slider-track-radius);
+      background: var(--slider-fill-color);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: var(--slider-thumb-size);
+      height: var(--slider-thumb-size);
+      border: 2px solid var(--slider-fill-color);
+      border-radius: var(--slider-thumb-radius);
+      background: #ffffff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    input[type="range"]:focus-visible {
+      outline: 2px solid var(--blue-wavelength);
+      outline-offset: 4px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Live Telemetry Meters */
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .telemetry-item {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+    }
+
+    .telemetry-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.2rem;
+    }
+
+    .telemetry-val {
+      font-family: var(--font-mono);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .telemetry-note {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-top: 0.15rem;
+    }
+
+    /* Survival Bar comparison */
+    .spectrum-survival {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .bar-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .bar-label-group {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .bar-track {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .bar-blue {
+      background: linear-gradient(90deg, #0284c7, var(--blue-wavelength));
+      box-shadow: 0 0 8px var(--blue-glow);
+    }
+
+    .bar-red {
+      background: linear-gradient(90deg, #dc2626, var(--red-wavelength));
+      box-shadow: 0 0 8px var(--red-glow);
+    }
+
+    /* Simulation Action Bar (Play/Pause, Mode Toggles) */
+    .sim-actions {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+
+    .btn-action {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.6rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-action.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--blue-wavelength);
+      color: var(--blue-wavelength);
+    }
+
+    /* Right Column: Visual Canvas & Ground Observer POV */
+    .sim-display-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .canvas-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .canvas-header {
+      padding: 1rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .canvas-header h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .canvas-legend {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .legend-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      height: 480px;
+      background: #040711;
+      overflow: hidden;
+    }
+
+    canvas#physicsCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+
+    /* Ground Observer POV Window (Picture-in-Picture card) */
+    .ground-pov-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .ground-pov-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .ground-pov-header h3 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .pov-window {
+      height: 110px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      transition: background 0.4s ease;
+    }
+
+    /* Sun disk in ground POV */
+    .pov-sun-disc {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.8));
+      transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* Horizon terrain silhouette */
+    .pov-terrain {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 24px;
+      background: #090d16;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      color: var(--text-dim);
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .pov-description {
+      margin-top: 0.75rem;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ==========================================================================
+       5. INTERACTIVE WAVELENGTH EXPLORER (ROYGBIV)
+       ========================================================================== */
+    .spectrum-explorer-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .explorer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1.25rem;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .explorer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .wavelength-slider-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .spectrum-gradient-bar {
+      height: 18px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(
+        90deg,
+        #7c3aed 0%,    /* Violet ~380nm */
+        #2563eb 15%,   /* Blue ~450nm */
+        #06b6d4 30%,   /* Cyan ~490nm */
+        #10b981 48%,   /* Green ~530nm */
+        #eab308 65%,   /* Yellow ~580nm */
+        #f97316 80%,   /* Orange ~620nm */
+        #ef4444 100%   /* Red ~700nm */
+      );
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
+      position: relative;
+    }
+
+    .wavelength-indicator-dot {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 3px solid #ffffff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      pointer-events: none;
+      transition: left 0.1s ease;
+    }
+
+    .wavelength-stats-panel {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+
+    .stat-row .stat-label {
+      color: var(--text-muted);
+    }
+
+    .stat-row .stat-val {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .scattering-multiplier-box {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    .scattering-multiplier-val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--blue-wavelength);
+      font-family: var(--font-mono);
+    }
+
+    .scattering-multiplier-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       6. "TEST YOUR KNOWLEDGE" INTERACTIVE QUIZ
+       ========================================================================== */
+    .quiz-section {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .quiz-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 1rem;
+    }
+
+    .quiz-header h2 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .score-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-subtle);
+      padding: 0.4rem 1rem;
+      border-radius: var(--radius-full);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--solar-yellow);
+    }
+
+    .quiz-question-card {
+      background: rgba(14, 23, 46, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .question-prompt {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    .q-number {
+      color: var(--blue-wavelength);
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.6rem;
+    }
+
+    .quiz-option-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      padding: 0.85rem 1.1rem;
+      font-size: 0.92rem;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.18s ease;
+      position: relative;
+    }
+
+    .quiz-option-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateX(4px);
+    }
+
+    .quiz-option-btn.correct {
+      background: rgba(16, 185, 129, 0.2) !important;
+      border-color: var(--green-accent) !important;
+      color: #ffffff !important;
+      font-weight: 600;
+      box-shadow: 0 0 12px var(--emerald-glow);
+    }
+
+    .quiz-option-btn.incorrect {
+      background: rgba(239, 68, 68, 0.2) !important;
+      border-color: var(--red-wavelength) !important;
+      color: #fca5a5 !important;
+    }
+
+    .quiz-option-btn:disabled {
+      cursor: default;
+      opacity: 0.85;
+    }
+
+    .opt-letter {
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .feedback-box {
+      margin-top: 1rem;
+      padding: 0.9rem 1.1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      line-height: 1.5;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .feedback-box.show {
+      display: block;
+    }
+
+    .feedback-box.correct-feedback {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--green-accent);
+      color: #a7f3d0;
+    }
+
+    .feedback-box.incorrect-feedback {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--red-wavelength);
+      color: #fecaca;
+    }
+
+    .quiz-reset-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-subtle);
+      color: #fff;
+      padding: 0.6rem 1.25rem;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .quiz-reset-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* ==========================================================================
+       7. MYTH BUSTER & REAL-WORLD PHENOMENA CARDS
+       ========================================================================== */
+    .fun-facts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .fact-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .fact-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .fact-card p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      padding: 2rem 1rem 1rem;
+      margin-top: 1rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Accessibility / Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- 1. HEADER & INTRO SECTION -->
+    <header class="hero" id="top">
+      <div class="grade-badge">
+        <span>⚡ Grade 10 Physics Lab</span>
+        <span>•</span>
+        <span>Optics & Waves</span>
+      </div>
+      <h1 class="hero-title">Scattering of Light in the Atmosphere</h1>
+      <p class="hero-subtitle">
+        Why is the daytime sky brilliant blue, while sunsets explode into fiery red and gold? 
+        Explore how atomic-scale interactions and the physics of wave optics shape our sky!
+      </p>
+
+      <!-- Conceptual Analogy Grid -->
+      <div class="intro-grid">
+        <div class="concept-card">
+          <h3>🎱 The Pinball Analogy</h3>
+          <p>
+            Imagine firing thousands of marbles across a room filled with bumpers (gas molecules). 
+            Tiny, high-frequency marbles (short blue wavelengths) bounce off everything and scatter everywhere. 
+            Large, heavy bowling balls (long red wavelengths) plow right through without getting deflected!
+          </p>
+        </div>
+
+        <div class="concept-card">
+          <h3>📐 Rayleigh's 1/λ⁴ Law</h3>
+          <p>
+            In 1871, Lord Rayleigh discovered that for particles smaller than light's wavelength, scattering intensity is inversely proportional to the 4th power of wavelength:
+          </p>
+          <div class="formula-tag">Scattering Intensity ∝ 1 / λ⁴</div>
+          <p style="margin-top: 0.4rem; font-size: 0.85rem;">
+            Because blue light (~400 nm) has roughly half the wavelength of red light (~700 nm), <strong>blue light scatters nearly 10× more effectively!</strong>
+          </p>
+        </div>
+
+        <div class="concept-card">
+          <h3>📏 Atmospheric Path Length</h3>
+          <p>
+            At noon, the sun shines straight down through about <strong>10 to 15 km</strong> of dense air. 
+            At sunset, light strikes the curved Earth at a grazing angle, traveling through up to <strong>10× to 30× more air</strong>—stripping away all blue photons!
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <!-- 2. MAIN SIMULATION (SPLIT SCREEN LAYOUT) -->
+    <main class="sim-layout">
+
+      <!-- LEFT COLUMN: CONTROLS & TELEMETRY -->
+      <section class="sim-controls" aria-label="Simulation Controls and Readouts">
+
+        <!-- Time of Day & Presets -->
+        <div class="card">
+          <div class="card-title">
+            <span>⚙️ Orbital Controls</span>
+            <span class="badge">Live Physics</span>
+          </div>
+
+          <!-- Time of Day Slider -->
+          <div class="control-group">
+            <div class="control-header">
+              <label for="timeSlider" class="control-label">
+                <span>🕒 Solar Position (Time of Day):</span>
+              </label>
+              <span class="control-value" id="timeValDisplay">12:00 PM (Noon)</span>
+            </div>
+            <input 
+              type="range" 
+              id="timeSlider" 
+              min="0" 
+              max="100" 
+              value="10" 
+              step="1"
+              aria-label="Time of day from midday noon to sunset"
+            />
+            
+            <!-- Quick Preset Buttons -->
+            <div class="preset-btn-group">
+              <button type="button" class="btn-preset active" id="presetNoon" data-val="10">
+                <span>☀️ Noon</span>
+                <span style="font-size: 0.68rem; opacity: 0.7;">Short Path</span>
+              </button>
+              <button type="button" class="btn-preset" id="presetAfternoon" data-val="55">
+                <span>🌤️ 4:00 PM</span>
+                <span style="font-size: 0.68rem; opacity: 0.7;">Medium Path</span>
+              </button>
+              <button type="button" class="btn-preset" id="presetSunset" data-val="96">
+                <span>🌅 Sunset</span>
+                <span style="font-size: 0.68rem; opacity: 0.7;">30× Path!</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Atmosphere Density Control -->
+          <div class="control-group" style="margin-top: 1.5rem;">
+            <div class="control-header">
+              <label class="control-label">
+                <span>🌍 Atmosphere Density:</span>
+              </label>
+              <span class="control-value" id="densityValDisplay">1.0× (Earth Standard)</span>
+            </div>
+            <div class="segmented-control" role="radiogroup" aria-label="Atmospheric Condition">
+              <button type="button" class="segmented-btn" id="densityNone" data-density="0">
+                🚀 None (Moon/Space)
+              </button>
+              <button type="button" class="segmented-btn active" id="densityNormal" data-density="1">
+                🌱 Normal (Earth)
+              </button>
+              <button type="button" class="segmented-btn" id="densitySmog" data-density="2.5">
+                🏭 Smog / Volcanic
+              </button>
+            </div>
+          </div>
+
+          <!-- Toggles & Action Buttons -->
+          <div class="sim-actions">
+            <button type="button" class="btn-action active" id="togglePlayBtn">
+              <span id="playIcon">⏸️</span> <span id="playText">Pause Photons</span>
+            </button>
+            <button type="button" class="btn-action" id="toggleRayModeBtn">
+              <span>🌈 Ray Breakdown</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Physics Telemetry Dashboard -->
+        <div class="card">
+          <div class="card-title">
+            <span>📊 Atmospheric Telemetry</span>
+            <span class="badge" id="elevationBadge">Zenith 84°</span>
+          </div>
+
+          <div class="telemetry-grid">
+            <div class="telemetry-item">
+              <div class="telemetry-label">Relative Air Mass</div>
+              <div class="telemetry-val" id="pathMultiplierDisplay">1.0×</div>
+              <div class="telemetry-note" id="pathKmDisplay">~12 km of air</div>
+            </div>
+
+            <div class="telemetry-item">
+              <div class="telemetry-label">Scattering Power</div>
+              <div class="telemetry-val" style="color: var(--blue-wavelength);">9.4×</div>
+              <div class="telemetry-note">Blue vs. Red (1/λ⁴)</div>
+            </div>
+          </div>
+
+          <!-- Direct Line of Sight Survival Rates -->
+          <div class="spectrum-survival">
+            <div class="bar-row">
+              <div class="bar-label-group">
+                <span>Direct Blue Light (450 nm)</span>
+                <span id="bluePercent">82% surviving</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill bar-blue" id="blueBar" style="width: 82%;"></div>
+              </div>
+            </div>
+
+            <div class="bar-row">
+              <div class="bar-label-group">
+                <span>Direct Red Light (700 nm)</span>
+                <span id="redPercent">98% surviving</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill bar-red" id="redBar" style="width: 98%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <p style="font-size: 0.78rem; color: var(--text-dim); margin-top: 1rem; line-height: 1.4;">
+            *Notice: As air mass increases at sunset, direct blue photons drop toward <strong>0%</strong>, leaving only unscattered red light to strike the observer's retinas!
+          </p>
+        </div>
+
+      </section>
+
+
+      <!-- RIGHT COLUMN: VISUAL CANVAS & OBSERVER POV -->
+      <section class="sim-display-column" aria-label="Visual Demonstration Canvas">
+
+        <!-- Main Interactive Planetary Canvas -->
+        <div class="canvas-card">
+          <div class="canvas-header">
+            <h2>
+              <span>🪐 Planetary Orbital View</span>
+            </h2>
+            <div class="canvas-legend">
+              <div class="legend-item">
+                <span class="legend-dot" style="background: var(--blue-wavelength);"></span>
+                <span>Scattered Blue Photons</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background: var(--red-wavelength);"></span>
+                <span>Direct Red Photons</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="canvas-container" id="canvasWrapper">
+            <canvas id="physicsCanvas" width="800" height="480"></canvas>
+          </div>
+        </div>
+
+        <!-- Ground Observer's POV Mini-Window -->
+        <div class="ground-pov-card">
+          <div class="ground-pov-header">
+            <h3>
+              <span>👀 Observer's Ground View</span>
+              <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">(What you see looking toward the Sun)</span>
+            </h3>
+            <span class="badge" id="observerStatusBadge">Daytime Sky: Azure Blue</span>
+          </div>
+
+          <div class="pov-window" id="povWindow">
+            <div class="pov-sun-disc" id="povSunDisc"></div>
+            <div class="pov-terrain">
+              <span>⬅️ East Horizon</span>
+              <span id="sunAltitudeLabel">Sun Elevation: 82°</span>
+              <span>West Horizon ➡️</span>
+            </div>
+          </div>
+
+          <p class="pov-description" id="povExplanation">
+            <strong>Midday:</strong> Sunlight punches through a short path of atmosphere. Blue light scatters in all directions across the sky dome, bathing the landscape in diffuse blue light, while the Sun appears blazing white-yellow overhead.
+          </p>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- 3. INTERACTIVE ROYGBIV WAVELENGTH EXPLORER -->
+    <section class="spectrum-explorer-card" aria-label="Wavelength and Rayleigh Law Inspector">
+      <div class="card-title">
+        <span>🔬 Interactive Wavelength Explorer: The 1/λ⁴ Rule</span>
+        <span class="badge">Lord Rayleigh's Math</span>
+      </div>
+
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Drag across the visible light spectrum (380 nm to 750 nm) to see how wavelength directly determines how many times more intensely each color gets scattered by atmospheric gas molecules.
+      </p>
+
+      <div class="explorer-grid">
+        <div class="wavelength-slider-wrap">
+          <div class="control-header">
+            <span class="control-label" id="waveColorName">Selected: Blue Light</span>
+            <span class="control-value" id="waveNmDisplay">450 nm</span>
+          </div>
+
+          <div class="spectrum-gradient-bar" id="spectrumBar">
+            <div class="wavelength-indicator-dot" id="waveIndicatorDot" style="left: 20%;"></div>
+          </div>
+
+          <input 
+            type="range" 
+            id="waveSlider" 
+            min="380" 
+            max="750" 
+            value="450" 
+            step="5"
+            aria-label="Wavelength in nanometers from 380 to 750"
+          />
+
+          <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-dim); font-family: var(--font-mono);">
+            <span>380 nm (Violet)</span>
+            <span>550 nm (Green)</span>
+            <span>750 nm (Deep Red)</span>
+          </div>
+        </div>
+
+        <div class="wavelength-stats-panel">
+          <div class="stat-row">
+            <span class="stat-label">Wavelength (λ):</span>
+            <span class="stat-val" id="lambdaVal">450 × 10⁻⁹ m</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Wave Frequency (f):</span>
+            <span class="stat-val" id="freqVal">6.67 × 10¹⁴ Hz</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Relative to Red (700nm):</span>
+            <span class="stat-val" id="ratioFormula">(700 / 450)⁴ = 5.86×</span>
+          </div>
+
+          <div class="scattering-multiplier-box">
+            <div class="scattering-multiplier-val" id="multiplierBig">5.9× More Scattering</div>
+            <div class="scattering-multiplier-sub">compared to standard red light!</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. "TEST YOUR KNOWLEDGE" INTERACTIVE QUIZ -->
+    <section class="quiz-section" aria-label="Interactive Physics Quiz">
+      <div class="quiz-header">
+        <h2>
+          <span>🎯 Test Your Knowledge: The Atmospheric Challenge</span>
+        </h2>
+        <div class="score-badge">
+          <span>Score:</span>
+          <span id="scoreTracker">0 / 3</span>
+        </div>
+      </div>
+
+      <div id="quizContainer">
+        <!-- Question 1 -->
+        <article class="quiz-question-card" data-qid="1">
+          <div class="question-prompt">
+            <span class="q-number">Q1.</span>
+            <span>Why does the midday sky appear bright blue rather than red?</span>
+          </div>
+          <div class="options-grid">
+            <button type="button" class="quiz-option-btn" data-correct="false">
+              <span class="opt-letter">A</span>
+              <span>Earth's vast blue oceans reflect up into the clouds like a giant mirror.</span>
+            </button>
+            <button type="button" class="quiz-option-btn" data-correct="true">
+              <span class="opt-letter">B</span>
+              <span>Blue light has a much shorter wavelength and scatters ~10× more effectively off tiny N₂ and O₂ molecules in all directions.</span>
+            </button>
+            <button type="button" class="quiz-option-btn" data-correct="false">
+              <span class="opt-letter">C</span>
+              <span>Red light is completely absorbed by atmospheric ozone before reaching the ground.</span>
+            </button>
+            <button type="button" class="quiz-option-btn" data-correct="false">
+              <span class="opt-letter">D</span>
+              <span>The Sun only emits blue wavelengths during the middle hours of the day.</span>
+            </button>
+          </div>
+          <div class="feedback-box"></div>
+        </article>
+
+        <!-- Question 2 -->
+        <article class="quiz-question-card" data-qid="2">
+          <div class="question-prompt">
+            <span class="q-number">Q2.</span>
+            <span>If you were an astronaut standing on the Moon during the lunar daytime with the Sun blazing directly overhead, what color would the sky be?</span>
+          </div>
+          <div class="options-grid">
+            <button type="button" class="quiz-option-btn" data-correct="false">
+              <span class="opt-letter">A</span>
+              <span>Bright azure blue, exactly like Earth.</span>
+            </button>
+            <button type="button" class="quiz-option-btn" data-correct="false">
+              <span class="opt-letter">B</span>
+              <span>Milky white, because white lunar dust reflects light everywhere.</span>
+            </button>
+            <button type="button" class="quiz-option-btn" data-correct="true">
+              <span class="opt-letter">C</span>
+              <span>Pitch black with stars visible, because the Moon has no atmosphere to scatter light.</span>
+            </button>
+            <button type="button" class="quiz-option-btn" data-correct="false">
+              <span class="opt-letter">D</span>
+              <span>Fiery orange due to intense solar radiation warming the rocks.</span>
+            </button>
+          </div>
+          <div class="feedback-box"></div>
+        </article>
+
+        <!-- Question 3 -->
+        <article class="quiz-question-card" data-qid="3">
+          <div class="question-prompt">
+            <span class="q-number">Q3.</span>
+            <span>Why do sunsets and sunrises turn brilliant shades of red and orange?</span>
+          </div>
+          <div class="options-grid">
+            <button type="button" class="quiz-option-btn" data-correct="false">
+              <span class="opt-letter">A</span>
+              <span>The Sun cools down by thousands of degrees as it approaches the horizon.</span>
+            </button>
+            <button type="button" class="quiz-option-btn" data-correct="true">
+              <span class="opt-letter">B</span>
+              <span>Sunlight travels through 10× to 30× more atmosphere, scattering away virtually all blue photons before the beam reaches your eyes.</span>
+            </button>
+            <button type="button" class="quiz-option-btn" data-correct="false">
+              <span class="opt-letter">C</span>
+              <span>Earth's rotation stretches the light waves into longer frequencies via the Doppler Effect.</span>
+            </button>
+            <button type="button" class="quiz-option-btn" data-correct="false">
+              <span class="opt-letter">D</span>
+              <span>Dust particles only reflect red light and absorb all other colors.</span>
+            </button>
+          </div>
+          <div class="feedback-box"></div>
+        </article>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <button type="button" class="quiz-reset-btn" id="resetQuizBtn">
+          <span>🔄 Retake Quiz</span>
+        </button>
+        <div id="quizCompletionMessage" style="font-weight: 700; font-size: 0.95rem; color: var(--green-accent); display: none;">
+          🎉 Outstanding! You've mastered atmospheric light scattering!
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. PHYSICS MYTH BUSTERS & EXTENSIONS -->
+    <section class="fun-facts-grid" aria-label="Mythbusters and Real-World Applications">
+      
+      <div class="fact-card">
+        <h3>🟣 Why Isn't the Sky Violet?</h3>
+        <p>
+          Violet light has an even shorter wavelength (~380-400 nm) than blue light and scatters even more fiercely! So why don't we see a purple sky? 
+          Two reasons: First, sunlight has far fewer violet photons than blue ones. 
+          Second, human retinas have three color receptors (cones), and our eyes are significantly more sensitive to blue and green than to violet!
+        </p>
+      </div>
+
+      <div class="fact-card">
+        <h3>☁️ Why Are Clouds White? (Mie Scattering)</h3>
+        <p>
+          Clouds are composed of liquid water droplets that are hundreds of times <em>larger</em> than the wavelength of light. 
+          When particles are large, they enter <strong>Mie Scattering</strong>, which scatters all colors of light equally! 
+          When all colors scatter together in equal proportions, we see pure white.
+        </p>
+      </div>
+
+      <div class="fact-card">
+        <h3>🛑 Why Are Brake Lights & Stop Signs Red?</h3>
+        <p>
+          Physics saves lives! Because red has the longest wavelength in the visible spectrum (~700 nm), it suffers the absolute least amount of Rayleigh scattering. 
+          Red light penetrates the farthest through fog, haze, rain, and dusty air without getting washed out!
+        </p>
+      </div>
+
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>Interactive Physics Learning Module • Grade 10 Physical Science • Pure HTML5, CSS & Canvas (Zero External Dependencies)</p>
+    </footer>
+
+  </div>
+
+  <!-- ==========================================================================
+       JAVASCRIPT LOGIC & SIMULATION ENGINE
+       ========================================================================== -->
+  <script>
+    (function() {
+      'use strict';
+
+      /* ------------------------------------------------------------------------
+         STATE MANAGEMENT
+         ------------------------------------------------------------------------ */
+      const state = {
+        // timeOfDay: 0 (Noon: 90 deg overhead) -> 100 (Sunset: grazing horizon ~2 deg)
+        timeOfDay: 10,
+        // atmosphereDensity: 0 (space/moon), 1.0 (normal earth), 2.5 (smog/volcano)
+        atmosphereDensity: 1.0,
+        isPlaying: true,
+        showRayBreakdown: false,
+        // Wavelength Explorer state (in nm)
+        selectedWavelength: 450,
+        // Quiz state
+        quizScore: 0,
+        answeredQuestions: new Set()
+      };
+
+      /* ------------------------------------------------------------------------
+         DOM ELEMENT REFERENCES
+         ------------------------------------------------------------------------ */
+      const timeSlider = document.getElementById('timeSlider');
+      const timeValDisplay = document.getElementById('timeValDisplay');
+      const presetNoon = document.getElementById('presetNoon');
+      const presetAfternoon = document.getElementById('presetAfternoon');
+      const presetSunset = document.getElementById('presetSunset');
+
+      const densityNone = document.getElementById('densityNone');
+      const densityNormal = document.getElementById('densityNormal');
+      const densitySmog = document.getElementById('densitySmog');
+      const densityValDisplay = document.getElementById('densityValDisplay');
+
+      const togglePlayBtn = document.getElementById('togglePlayBtn');
+      const playIcon = document.getElementById('playIcon');
+      const playText = document.getElementById('playText');
+      const toggleRayModeBtn = document.getElementById('toggleRayModeBtn');
+
+      // Telemetry
+      const elevationBadge = document.getElementById('elevationBadge');
+      const pathMultiplierDisplay = document.getElementById('pathMultiplierDisplay');
+      const pathKmDisplay = document.getElementById('pathKmDisplay');
+      const bluePercent = document.getElementById('bluePercent');
+      const redPercent = document.getElementById('redPercent');
+      const blueBar = document.getElementById('blueBar');
+      const redBar = document.getElementById('redBar');
+
+      // Observer POV elements
+      const povWindow = document.getElementById('povWindow');
+      const povSunDisc = document.getElementById('povSunDisc');
+      const observerStatusBadge = document.getElementById('observerStatusBadge');
+      const sunAltitudeLabel = document.getElementById('sunAltitudeLabel');
+      const povExplanation = document.getElementById('povExplanation');
+
+      // Spectrum Explorer
+      const waveSlider = document.getElementById('waveSlider');
+      const waveNmDisplay = document.getElementById('waveNmDisplay');
+      const waveColorName = document.getElementById('waveColorName');
+      const waveIndicatorDot = document.getElementById('waveIndicatorDot');
+      const lambdaVal = document.getElementById('lambdaVal');
+      const freqVal = document.getElementById('freqVal');
+      const ratioFormula = document.getElementById('ratioFormula');
+      const multiplierBig = document.getElementById('multiplierBig');
+
+      // Canvas
+      const canvas = document.getElementById('physicsCanvas');
+      const ctx = canvas.getContext('2d');
+      const canvasWrapper = document.getElementById('canvasWrapper');
+
+      /* ------------------------------------------------------------------------
+         HIGH-DPI CANVAS SETUP
+         ------------------------------------------------------------------------ */
+      let viewWidth = 800;
+      let viewHeight = 480;
+
+      function resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvasWrapper.getBoundingClientRect();
+        viewWidth = rect.width;
+        viewHeight = rect.height;
+
+        canvas.width = Math.floor(viewWidth * dpr);
+        canvas.height = Math.floor(viewHeight * dpr);
+        ctx.scale(dpr, dpr);
+      }
+
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      /* ------------------------------------------------------------------------
+         PARTICLE SYSTEM FOR LIGHT BEAM & SCATTERING
+         ------------------------------------------------------------------------ */
+      const particles = [];
+      const MAX_PARTICLES = 160;
+
+      class PhotonParticle {
+        constructor() {
+          this.reset(true);
+        }
+
+        reset(initialSpread = false) {
+          // Progress along direct beam from Sun (0) to Observer (1)
+          this.t = initialSpread ? Math.random() : 0;
+          this.speed = 0.005 + Math.random() * 0.003;
+          this.isScattered = false;
+
+          // Color type: 'blue' or 'red'
+          // White light has mixture: ~50% blue-violet, ~50% red-orange
+          this.isBlue = Math.random() < 0.55;
+
+          // Scattered movement vector
+          this.scatterX = 0;
+          this.scatterY = 0;
+          this.scatterVx = 0;
+          this.scatterVy = 0;
+          this.scatterOpacity = 1.0;
+        }
+
+        update(pathLengthFactor, atmosphereActive) {
+          if (!this.isScattered) {
+            this.t += this.speed;
+
+            // Check if particle is inside atmospheric layer (t > 0.45)
+            if (atmosphereActive && this.t > 0.45 && this.t < 0.98) {
+              // Rayleigh scattering probability per tick
+              // Blue light scatters ~9.4x more than red
+              const baseScatterProb = this.isBlue ? 0.038 : 0.0038;
+              const prob = baseScatterProb * pathLengthFactor * state.atmosphereDensity;
+
+              if (Math.random() < prob) {
+                this.isScattered = true;
+                // Scatter in random omnidirectional angle (dipole scattering)
+                const angle = Math.random() * Math.PI * 2;
+                const v = 1.2 + Math.random() * 1.8;
+                this.scatterVx = Math.cos(angle) * v;
+                this.scatterVy = Math.sin(angle) * v;
+                this.scatterOpacity = 1.0;
+              }
+            }
+
+            if (this.t >= 1.0) {
+              this.reset(false);
+            }
+          } else {
+            // Scattered particle flies off in the atmosphere
+            this.scatterX += this.scatterVx;
+            this.scatterY += this.scatterVy;
+            this.scatterOpacity -= 0.02;
+
+            if (this.scatterOpacity <= 0) {
+              this.reset(false);
+            }
+          }
+        }
+      }
+
+      // Initialize particles
+      for (let i = 0; i < MAX_PARTICLES; i++) {
+        particles.push(new PhotonParticle());
+      }
+
+      /* ------------------------------------------------------------------------
+         ASTRONOMY & PHYSICS CALCULATIONS
+         ------------------------------------------------------------------------ */
+      function getPhysicsModel() {
+        // timeOfDay: 0 -> 100
+        // Maps to Sun Elevation angle theta from ~85° (Noon) down to ~2° (Sunset)
+        const sunAngleDeg = 85 - (state.timeOfDay / 100) * 83; // 85 deg down to 2 deg
+        const sunAngleRad = (sunAngleDeg * Math.PI) / 180;
+
+        // Effective optical air mass path length (Kasten and Young formulation approximation)
+        // At 90 deg: path = 1.0x. At 2 deg: path approaches ~20-30x
+        let airMass = 1.0 / (Math.sin(sunAngleRad) + 0.05064 * Math.pow(sunAngleDeg + 4.49, -1.6364));
+        airMass = Math.max(1.0, Math.min(28.0, airMass));
+
+        // Atmospheric density factor
+        const effectiveAirMass = airMass * state.atmosphereDensity;
+
+        // Direct beam survival rate (Beer-Lambert-Bouguer Law)
+        // I = I0 * exp(-tau * airMass)
+        // tau_blue ~ 0.12, tau_red ~ 0.012
+        let blueSurvival = Math.exp(-0.11 * effectiveAirMass);
+        let redSurvival = Math.exp(-0.012 * effectiveAirMass);
+
+        if (state.atmosphereDensity === 0) {
+          blueSurvival = 1.0;
+          redSurvival = 1.0;
+        }
+
+        return {
+          sunAngleDeg,
+          sunAngleRad,
+          airMass,
+          effectiveAirMass,
+          blueSurvival: Math.max(0, Math.min(1, blueSurvival)),
+          redSurvival: Math.max(0, Math.min(1, redSurvival))
+        };
+      }
+
+      /* ------------------------------------------------------------------------
+         RENDER LOOP
+         ------------------------------------------------------------------------ */
+      // Starfield background cache
+      const stars = [];
+      for (let i = 0; i < 70; i++) {
+        stars.push({
+          x: Math.random(),
+          y: Math.random(),
+          r: 0.6 + Math.random() * 1.2,
+          alpha: 0.3 + Math.random() * 0.7
+        });
+      }
+
+      function drawScene() {
+        ctx.clearRect(0, 0, viewWidth, viewHeight);
+
+        const model = getPhysicsModel();
+
+        // 1. Draw Space background & stars
+        ctx.fillStyle = '#050914';
+        ctx.fillRect(0, 0, viewWidth, viewHeight);
+
+        // Stars (brighter if atmosphere density is 0, dimmer at noon)
+        const starBrightness = state.atmosphereDensity === 0 ? 0.9 : (state.timeOfDay > 80 ? 0.6 : 0.2);
+        for (const star of stars) {
+          ctx.beginPath();
+          ctx.arc(star.x * viewWidth, star.y * (viewHeight * 0.65), star.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha * starBrightness})`;
+          ctx.fill();
+        }
+
+        // Geometry: Earth center and radii
+        // Place Earth center below the canvas so observer sits nicely at top
+        const earthCenterX = viewWidth * 0.5;
+        const earthRadius = Math.min(viewWidth, viewHeight) * 1.1;
+        const earthCenterY = viewHeight * 0.95 + earthRadius;
+        const atmosHeight = 110; // Stylized atmosphere shell thickness
+        const atmosRadius = earthRadius + atmosHeight;
+
+        // Observer position at the top apex of Earth
+        const obsX = earthCenterX;
+        const obsY = earthCenterY - earthRadius;
+
+        // Atmosphere Shell Outer Glow & Scatter Illumination
+        if (state.atmosphereDensity > 0) {
+          const atmosGrad = ctx.createRadialGradient(
+            earthCenterX, earthCenterY, earthRadius,
+            earthCenterX, earthCenterY, atmosRadius + 15
+          );
+
+          // Atmosphere color shifts based on time of day
+          if (state.atmosphereDensity > 1.5) {
+            // Smog / Pollution
+            atmosGrad.addColorStop(0, 'rgba(168, 120, 80, 0.4)');
+            atmosGrad.addColorStop(0.7, 'rgba(120, 80, 60, 0.2)');
+            atmosGrad.addColorStop(1, 'rgba(60, 40, 30, 0)');
+          } else if (state.timeOfDay < 45) {
+            // Midday azure glow
+            atmosGrad.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
+            atmosGrad.addColorStop(0.7, 'rgba(30, 144, 255, 0.25)');
+            atmosGrad.addColorStop(1, 'rgba(14, 165, 233, 0)');
+          } else if (state.timeOfDay < 75) {
+            // Late afternoon golden-blue
+            atmosGrad.addColorStop(0, 'rgba(251, 191, 36, 0.35)');
+            atmosGrad.addColorStop(0.5, 'rgba(56, 189, 248, 0.25)');
+            atmosGrad.addColorStop(1, 'rgba(14, 165, 233, 0)');
+          } else {
+            // Sunset fiery gradient
+            atmosGrad.addColorStop(0, 'rgba(239, 68, 68, 0.5)');
+            atmosGrad.addColorStop(0.4, 'rgba(249, 115, 22, 0.4)');
+            atmosGrad.addColorStop(0.7, 'rgba(99, 102, 241, 0.2)');
+            atmosGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          }
+
+          ctx.beginPath();
+          ctx.arc(earthCenterX, earthCenterY, atmosRadius + 15, 0, Math.PI * 2);
+          ctx.fillStyle = atmosGrad;
+          ctx.fill();
+        }
+
+        // Atmosphere shell boundary line
+        ctx.beginPath();
+        ctx.arc(earthCenterX, earthCenterY, atmosRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = state.atmosphereDensity > 0 ? 'rgba(56, 189, 248, 0.25)' : 'rgba(255, 255, 255, 0.08)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Label: Top of Atmosphere
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.7)';
+        ctx.font = '11px system-ui, sans-serif';
+        ctx.fillText('Top of Atmosphere (Space Boundary)', earthCenterX - 95, obsY - atmosHeight + 14);
+
+        // 2. Calculate Sun Position in space
+        // Orbital arc based on timeOfDay
+        // Noon: high up slightly right/left. Sunset: low at left horizon.
+        const orbitRadius = atmosRadius + 85;
+        const elevation = model.sunAngleRad;
+        
+        // Let's place the sun on an arc towards the left
+        const sunX = earthCenterX - Math.cos(elevation) * orbitRadius;
+        const sunY = earthCenterY - Math.sin(elevation) * orbitRadius;
+
+        // Draw Sun Beam Centerline / Light Cone
+        const beamDx = obsX - sunX;
+        const beamDy = obsY - sunY;
+        const beamDist = Math.hypot(beamDx, beamDy);
+
+        // Find intersection of beam with atmosphere outer boundary
+        // For visual clarity, entry point is approx at fraction along beam
+        const entryFraction = Math.max(0.35, 1 - (atmosHeight / beamDist) * 1.5);
+        const entryX = sunX + beamDx * entryFraction;
+        const entryY = sunY + beamDy * entryFraction;
+
+        // Atmospheric path line
+        ctx.beginPath();
+        ctx.moveTo(entryX, entryY);
+        ctx.lineTo(obsX, obsY);
+        ctx.strokeStyle = state.timeOfDay > 75 ? 'rgba(249, 115, 22, 0.35)' : 'rgba(56, 189, 248, 0.25)';
+        ctx.lineWidth = 34;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // 3. Update & Draw Photon Particles
+        if (state.isPlaying) {
+          for (const p of particles) {
+            p.update(model.airMass, state.atmosphereDensity > 0);
+          }
+        }
+
+        for (const p of particles) {
+          if (!p.isScattered) {
+            // Particle moving straight along beam from Sun to Observer
+            const px = sunX + beamDx * p.t;
+            const py = sunY + beamDy * p.t;
+
+            // Color: Blue or Red
+            let color;
+            if (state.showRayBreakdown) {
+              color = p.isBlue ? '#38bdf8' : '#ef4444';
+            } else {
+              // In space (before atmosphere), photons look crisp white/yellow
+              if (p.t < entryFraction || state.atmosphereDensity === 0) {
+                color = '#ffffff';
+              } else {
+                color = p.isBlue ? '#38bdf8' : '#fb923c';
+              }
+            }
+
+            ctx.beginPath();
+            ctx.arc(px, py, p.isBlue ? 2.5 : 3.2, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = color;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          } else {
+            // Scattered particle flying in random direction
+            // Position relative to scatter point along beam
+            const px = (sunX + beamDx * p.t) + p.scatterX;
+            const py = (sunY + beamDy * p.t) + p.scatterY;
+
+            ctx.beginPath();
+            ctx.arc(px, py, 2.2, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(56, 189, 248, ${p.scatterOpacity * 0.9})`;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(56, 189, 248, 0.8)';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
+        }
+
+        // 4. Draw Earth Body
+        const earthGrad = ctx.createRadialGradient(
+          earthCenterX, earthCenterY, 0,
+          earthCenterX, earthCenterY, earthRadius
+        );
+        earthGrad.addColorStop(0.7, '#0f2744');
+        earthGrad.addColorStop(0.95, '#1e3a8a');
+        earthGrad.addColorStop(1, '#10b981'); // Green surface crust
+
+        ctx.beginPath();
+        ctx.arc(earthCenterX, earthCenterY, earthRadius, 0, Math.PI * 2);
+        ctx.fillStyle = earthGrad;
+        ctx.fill();
+        ctx.strokeStyle = '#34d399';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // 5. Draw Ground Observer
+        // Observer base on Earth surface
+        ctx.save();
+        ctx.translate(obsX, obsY);
+
+        // Local Horizon line
+        ctx.beginPath();
+        ctx.moveTo(-45, 0);
+        ctx.lineTo(45, 0);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Little stylized person
+        // Head
+        ctx.beginPath();
+        ctx.arc(0, -22, 4.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#fbbf24';
+        ctx.fill();
+        // Body
+        ctx.beginPath();
+        ctx.moveTo(0, -17);
+        ctx.lineTo(0, -6);
+        ctx.lineTo(-4, 0);
+        ctx.moveTo(0, -6);
+        ctx.lineTo(4, 0);
+        // Arms pointing up / looking at sky
+        ctx.moveTo(-6, -11);
+        ctx.lineTo(0, -14);
+        ctx.lineTo(6, -11);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // "You (Observer)" label
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 11px system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Observer', 0, 16);
+        ctx.restore();
+
+        // 6. Draw The Sun
+        // Sun glow
+        const sunGlow = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, 48);
+        sunGlow.addColorStop(0, 'rgba(255, 255, 255, 1)');
+        sunGlow.addColorStop(0.3, 'rgba(251, 191, 36, 0.8)');
+        sunGlow.addColorStop(0.7, state.timeOfDay > 75 ? 'rgba(239, 68, 68, 0.5)' : 'rgba(245, 158, 11, 0.3)');
+        sunGlow.addColorStop(1, 'rgba(245, 158, 11, 0)');
+
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, 48, 0, Math.PI * 2);
+        ctx.fillStyle = sunGlow;
+        ctx.fill();
+
+        // Sun Core
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, 15, 0, Math.PI * 2);
+        ctx.fillStyle = '#fffdf0';
+        ctx.fill();
+
+        // Direct line from sun to observer indicator
+        ctx.beginPath();
+        ctx.moveTo(sunX, sunY);
+        ctx.lineTo(obsX, obsY);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Telemetry annotations on canvas
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px system-ui, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`☀️ Incoming Solar Beam (${Math.round(model.sunAngleDeg)}° Elevation)`, sunX + 22, sunY - 10);
+
+        // Path indicator badge on canvas
+        const midPathX = (entryX + obsX) * 0.5;
+        const midPathY = (entryY + obsY) * 0.5;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(midPathX + 15, midPathY - 14, 130, 26);
+        ctx.strokeStyle = varColor('--border-accent');
+        ctx.strokeRect(midPathX + 15, midPathY - 14, 130, 26);
+        ctx.fillStyle = varColor('--blue-wavelength');
+        ctx.font = '11px monospace';
+        ctx.fillText(`Path: ${model.airMass.toFixed(1)}× thickness`, midPathX + 22, midPathY + 3);
+
+        requestAnimationFrame(drawScene);
+      }
+
+      function varColor(variableName) {
+        return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+      }
+
+      requestAnimationFrame(drawScene);
+
+      /* ------------------------------------------------------------------------
+         SYNCHRONIZED UI UPDATES (TELEMETRY & OBSERVER POV)
+         ------------------------------------------------------------------------ */
+      function updateSimulationUI() {
+        // Sync slider fill CSS progress
+        timeSlider.style.setProperty('--slider-progress', `${timeSlider.value}%`);
+
+        const model = getPhysicsModel();
+
+        // 1. Time display
+        let timeString = '12:00 PM (Noon)';
+        if (state.timeOfDay < 25) {
+          timeString = '12:00 PM (High Noon)';
+        } else if (state.timeOfDay < 50) {
+          timeString = '2:30 PM (Mid-Afternoon)';
+        } else if (state.timeOfDay < 75) {
+          timeString = '4:45 PM (Late Afternoon)';
+        } else if (state.timeOfDay < 90) {
+          timeString = '6:30 PM (Golden Hour)';
+        } else {
+          timeString = '7:30 PM (Sunset)';
+        }
+        timeValDisplay.textContent = timeString;
+
+        // 2. Telemetry metrics
+        elevationBadge.textContent = `Zenith: ${Math.round(model.sunAngleDeg)}°`;
+        pathMultiplierDisplay.textContent = `${model.airMass.toFixed(1)}×`;
+        pathKmDisplay.textContent = `~${Math.round(12 * model.airMass)} km of air`;
+
+        // Percentage survival
+        const blueSurvPct = Math.round(model.blueSurvival * 100);
+        const redSurvPct = Math.round(model.redSurvival * 100);
+
+        bluePercent.textContent = `${blueSurvPct}% surviving`;
+        redPercent.textContent = `${redSurvPct}% surviving`;
+
+        blueBar.style.width = `${blueSurvPct}%`;
+        redBar.style.width = `${redSurvPct}%`;
+
+        // 3. Observer POV Window Styling
+        updateObserverPOV(model);
+
+        // Update active preset buttons
+        presetNoon.classList.toggle('active', state.timeOfDay <= 25);
+        presetAfternoon.classList.toggle('active', state.timeOfDay > 25 && state.timeOfDay < 80);
+        presetSunset.classList.toggle('active', state.timeOfDay >= 80);
+      }
+
+      function updateObserverPOV(model) {
+        sunAltitudeLabel.textContent = `Sun Elevation: ${Math.round(model.sunAngleDeg)}°`;
+
+        if (state.atmosphereDensity === 0) {
+          // Lunar / Space condition
+          povWindow.style.background = '#02040a';
+          povSunDisc.style.background = '#ffffff';
+          povSunDisc.style.boxShadow = '0 0 25px rgba(255, 255, 255, 0.9)';
+          povSunDisc.style.bottom = `${15 + (model.sunAngleDeg / 90) * 55}px`;
+          observerStatusBadge.textContent = 'Lunar Sky: Pitch Black';
+          observerStatusBadge.style.color = '#e2e8f0';
+          povExplanation.innerHTML = `<strong>Zero Atmosphere:</strong> Without air molecules to scatter photons, the sky is completely pitch black even during daytime! The Sun is a blinding pure-white disc and stars are visible in the background.`;
+          return;
+        }
+
+        if (state.atmosphereDensity > 1.5) {
+          // Heavy Smog / Pollution (Mie scattering dominant)
+          povWindow.style.background = 'linear-gradient(to bottom, #4a3b32 0%, #7c5e48 60%, #9a3412 100%)';
+          povSunDisc.style.background = '#dc2626';
+          povSunDisc.style.boxShadow = '0 0 15px rgba(220, 38, 38, 0.6)';
+          povSunDisc.style.bottom = `${15 + (model.sunAngleDeg / 90) * 55}px`;
+          observerStatusBadge.textContent = 'Polluted: Murky Red-Brown';
+          observerStatusBadge.style.color = '#fb923c';
+          povExplanation.innerHTML = `<strong>Heavy Aerosols / Smog:</strong> Microscopic smoke and pollutant particles introduce heavy extinction. The sky turns hazy brown-orange, and the Sun is dimmed into a deep blood-red ball.`;
+          return;
+        }
+
+        // Standard Earth Atmosphere progression
+        const t = state.timeOfDay / 100;
+        const sunElevPercent = (model.sunAngleDeg / 90);
+        povSunDisc.style.bottom = `${12 + sunElevPercent * 58}px`;
+
+        if (t < 0.35) {
+          // Midday Noon
+          povWindow.style.background = 'linear-gradient(to bottom, #0284c7 0%, #38bdf8 65%, #bae6fd 100%)';
+          povSunDisc.style.background = '#ffffff';
+          povSunDisc.style.boxShadow = '0 0 35px rgba(255, 255, 255, 0.95), 0 0 60px rgba(56, 189, 248, 0.5)';
+          observerStatusBadge.textContent = 'Daytime: Azure Blue Sky';
+          observerStatusBadge.style.color = 'var(--blue-wavelength)';
+          povExplanation.innerHTML = `<strong>Midday (Short Path):</strong> Sunlight punches straight down through the thin atmosphere. Blue light scatters throughout the entire sky dome, while the direct beam reaching your eyes retains plenty of light, making the Sun look bright yellowish-white.`;
+        } else if (t < 0.75) {
+          // Late Afternoon / Golden Hour
+          povWindow.style.background = 'linear-gradient(to bottom, #1e40af 0%, #3b82f6 40%, #fbbf24 85%, #f97316 100%)';
+          povSunDisc.style.background = '#fef08a';
+          povSunDisc.style.boxShadow = '0 0 30px rgba(251, 191, 36, 0.8), 0 0 50px rgba(249, 115, 22, 0.4)';
+          observerStatusBadge.textContent = 'Late Afternoon: Warm Gold';
+          observerStatusBadge.style.color = 'var(--solar-yellow)';
+          povExplanation.innerHTML = `<strong>Late Afternoon:</strong> As the Sun drops lower, its rays travel through more air. Blue light begins scattering out of the direct beam, leaving warmer golden and amber tones.`;
+        } else {
+          // Sunset
+          povWindow.style.background = 'linear-gradient(to bottom, #1e1b4b 0%, #4c1d95 30%, #b91c1c 65%, #ea580c 85%, #fbbf24 100%)';
+          povSunDisc.style.background = '#ef4444';
+          povSunDisc.style.boxShadow = '0 0 30px rgba(239, 68, 68, 0.9), 0 0 60px rgba(249, 115, 22, 0.6)';
+          observerStatusBadge.textContent = 'Sunset: Crimson & Fire';
+          observerStatusBadge.style.color = 'var(--sunset-orange)';
+          povExplanation.innerHTML = `<strong>Sunset (Extreme Path Length):</strong> Sunlight cuts diagonally across thousands of miles of dense atmosphere. Virtually 100% of blue and violet photons are scattered out of line-of-sight. Only the longest red and orange wavelengths make it directly to your eyes!`;
+        }
+      }
+
+      /* ------------------------------------------------------------------------
+         EVENT LISTENERS & CONTROLS
+         ------------------------------------------------------------------------ */
+      timeSlider.addEventListener('input', (e) => {
+        state.timeOfDay = parseFloat(e.target.value);
+        updateSimulationUI();
+      });
+
+      // Presets
+      presetNoon.addEventListener('click', () => {
+        state.timeOfDay = 10;
+        timeSlider.value = 10;
+        updateSimulationUI();
+      });
+
+      presetAfternoon.addEventListener('click', () => {
+        state.timeOfDay = 55;
+        timeSlider.value = 55;
+        updateSimulationUI();
+      });
+
+      presetSunset.addEventListener('click', () => {
+        state.timeOfDay = 96;
+        timeSlider.value = 96;
+        updateSimulationUI();
+      });
+
+      // Atmosphere Density segmented buttons
+      const densityButtons = [densityNone, densityNormal, densitySmog];
+      densityButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          densityButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          state.atmosphereDensity = parseFloat(btn.dataset.density);
+
+          if (state.atmosphereDensity === 0) {
+            densityValDisplay.textContent = '0.0× (Vacuum/Space)';
+          } else if (state.atmosphereDensity === 1) {
+            densityValDisplay.textContent = '1.0× (Earth Standard)';
+          } else {
+            densityValDisplay.textContent = '2.5× (Smog/Dense)';
+          }
+
+          updateSimulationUI();
+        });
+      });
+
+      // Play/Pause
+      togglePlayBtn.addEventListener('click', () => {
+        state.isPlaying = !state.isPlaying;
+        togglePlayBtn.classList.toggle('active', state.isPlaying);
+        playIcon.textContent = state.isPlaying ? '⏸️' : '▶️';
+        playText.textContent = state.isPlaying ? 'Pause Photons' : 'Resume Photons';
+      });
+
+      // Ray Breakdown toggle
+      toggleRayModeBtn.addEventListener('click', () => {
+        state.showRayBreakdown = !state.showRayBreakdown;
+        toggleRayModeBtn.classList.toggle('active', state.showRayBreakdown);
+      });
+
+      /* ------------------------------------------------------------------------
+         WAVELENGTH EXPLORER LOGIC (1/λ⁴)
+         ------------------------------------------------------------------------ */
+      function updateWavelengthInspector(wavelength) {
+        state.selectedWavelength = wavelength;
+        waveNmDisplay.textContent = `${wavelength} nm`;
+        lambdaVal.textContent = `${wavelength} × 10⁻⁹ m`;
+
+        // Calculate frequency: f = c / lambda
+        const c = 3.0e8; // m/s
+        const freq = (c / (wavelength * 1e-9)).toExponential(2);
+        freqVal.textContent = `${freq} Hz`;
+
+        // Rayleigh factor relative to Red (700 nm): (700 / lambda)^4
+        const ratio = Math.pow(700 / wavelength, 4);
+        ratioFormula.textContent = `(700 / ${wavelength})⁴ = ${ratio.toFixed(2)}×`;
+        multiplierBig.textContent = `${ratio.toFixed(1)}× Scattering`;
+
+        // Color name and indicator dot placement
+        let colorName = 'Blue Light';
+        let hexColor = '#38bdf8';
+
+        if (wavelength < 420) {
+          colorName = 'Violet Light';
+          hexColor = '#a855f7';
+        } else if (wavelength < 480) {
+          colorName = 'Blue Light';
+          hexColor = '#38bdf8';
+        } else if (wavelength < 510) {
+          colorName = 'Cyan Light';
+          hexColor = '#06b6d4';
+        } else if (wavelength < 565) {
+          colorName = 'Green Light';
+          hexColor = '#10b981';
+        } else if (wavelength < 590) {
+          colorName = 'Yellow Light';
+          hexColor = '#eab308';
+        } else if (wavelength < 640) {
+          colorName = 'Orange Light';
+          hexColor = '#f97316';
+        } else {
+          colorName = 'Red Light';
+          hexColor = '#ef4444';
+        }
+
+        waveColorName.textContent = `Selected: ${colorName}`;
+        multiplierBig.style.color = hexColor;
+
+        // Position of indicator on bar (380 to 750)
+        const percent = ((wavelength - 380) / (750 - 380)) * 100;
+        waveIndicatorDot.style.left = `${percent}%`;
+        waveIndicatorDot.style.backgroundColor = hexColor;
+
+        // Sync slider fill CSS
+        waveSlider.style.setProperty('--slider-progress', `${percent}%`);
+        waveSlider.style.setProperty('--slider-fill-color', hexColor);
+      }
+
+      waveSlider.addEventListener('input', (e) => {
+        updateWavelengthInspector(parseInt(e.target.value, 10));
+      });
+
+      /* ------------------------------------------------------------------------
+         INTERACTIVE QUIZ LOGIC
+         ------------------------------------------------------------------------ */
+      const quizCards = document.querySelectorAll('.quiz-question-card');
+      const scoreTracker = document.getElementById('scoreTracker');
+      const resetQuizBtn = document.getElementById('resetQuizBtn');
+      const quizCompletionMessage = document.getElementById('quizCompletionMessage');
+
+      const explanations = {
+        1: {
+          correct: '🎯 Exactly right! Rayleigh scattering depends on 1/λ⁴. Because blue wavelengths (~400 nm) are roughly half that of red (~700 nm), blue light scatters nearly 10 times more vigorously off gas molecules across the entire sky!',
+          incorrect: '❌ Not quite. Earth’s sky is blue because of Rayleigh scattering! Tiny nitrogen and oxygen molecules scatter high-frequency short blue waves (~400 nm) nearly 10× more effectively than long red waves.'
+        },
+        2: {
+          correct: '🌟 Spot on! The Moon has essentially no atmosphere. Without gas molecules to intercept and scatter solar photons into your eyes from different angles, space remains pitch black even with the Sun blazing right next to it!',
+          incorrect: '❌ Incorrect. Remember: you only see light if photons enter your eyes. Without an atmospheric blanket of gas molecules to scatter sunlight sideways, the lunar daytime sky is completely jet-black with stars shining brightly!'
+        },
+        3: {
+          correct: '🔥 Brilliant answer! At sunset, sunlight traverses an atmospheric path 10× to 30× longer than at midday. Along this epic gauntlet, blue and violet photons get scattered out of the direct beam, leaving only the tenacious, long red and orange wavelengths to reach your eyes!',
+          incorrect: '❌ Not quite. The Sun’s temperature doesn’t change at dusk. Sunsets look red because the low angle forces sunlight through up to 30 times more atmosphere, scattering away all the blues and leaving only reds and oranges in the direct beam!'
+        }
+      };
+
+      quizCards.forEach(card => {
+        const qid = card.dataset.qid;
+        const options = card.querySelectorAll('.quiz-option-btn');
+        const feedback = card.querySelector('.feedback-box');
+
+        options.forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (state.answeredQuestions.has(qid)) return;
+            state.answeredQuestions.add(qid);
+
+            const isCorrect = btn.dataset.correct === 'true';
+
+            // Disable all options for this question
+            options.forEach(b => {
+              b.disabled = true;
+              if (b.dataset.correct === 'true') {
+                b.classList.add('correct');
+              }
+            });
+
+            if (isCorrect) {
+              btn.classList.add('correct');
+              state.quizScore++;
+              feedback.className = 'feedback-box correct-feedback show';
+              feedback.innerHTML = explanations[qid].correct;
+            } else {
+              btn.classList.add('incorrect');
+              feedback.className = 'feedback-box incorrect-feedback show';
+              feedback.innerHTML = explanations[qid].incorrect;
+            }
+
+            scoreTracker.textContent = `${state.quizScore} / ${quizCards.length}`;
+
+            if (state.answeredQuestions.size === quizCards.length) {
+              quizCompletionMessage.style.display = 'block';
+              if (state.quizScore === quizCards.length) {
+                quizCompletionMessage.innerHTML = '🏆 Perfect 3/3! You are officially an Atmospheric Optics Master!';
+              } else {
+                quizCompletionMessage.innerHTML = `Great effort! You scored ${state.quizScore}/3. Hit "Retake Quiz" to try for a perfect score!`;
+              }
+            }
+          });
+        });
+      });
+
+      resetQuizBtn.addEventListener('click', () => {
+        state.quizScore = 0;
+        state.answeredQuestions.clear();
+        scoreTracker.textContent = `0 / ${quizCards.length}`;
+        quizCompletionMessage.style.display = 'none';
+
+        quizCards.forEach(card => {
+          const options = card.querySelectorAll('.quiz-option-btn');
+          const feedback = card.querySelector('.feedback-box');
+
+          options.forEach(btn => {
+            btn.disabled = false;
+            btn.classList.remove('correct', 'incorrect');
+          });
+
+          feedback.className = 'feedback-box';
+          feedback.textContent = '';
+        });
+      });
+
+      /* ------------------------------------------------------------------------
+         INITIALIZATION
+         ------------------------------------------------------------------------ */
+      updateSimulationUI();
+      updateWavelengthInspector(450);
+
+    })();
+  </script>
+</body>
+</html>
