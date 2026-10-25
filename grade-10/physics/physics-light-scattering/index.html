@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Atmospheric Light Scattering: Why is the Sky Blue & Sunsets Red?</title>
-  <meta name="description" content="An interactive Grade 10 physics simulation explaining Rayleigh scattering, why the sky is blue, and why sunsets turn red and orange.">
+  <meta name="description" content="An interactive Grade 10 physics module explaining Rayleigh scattering, the Tyndall effect, colloidal sulfur lab experiment, and why sunsets turn red.">
   <style>
     /* ==========================================================================
        1. CSS CUSTOM PROPERTIES & DESIGN TOKENS
@@ -147,7 +147,7 @@
     p.hero-subtitle {
       color: var(--text-muted);
       font-size: clamp(1rem, 1.8vw, 1.15rem);
-      max-width: 780px;
+      max-width: 820px;
       margin: 0 auto 1.5rem;
     }
 
@@ -214,7 +214,6 @@
       }
     }
 
-    /* Left Column: Interactive Controls & Telemetry */
     .sim-controls {
       display: flex;
       flex-direction: column;
@@ -509,7 +508,7 @@
       box-shadow: 0 0 8px var(--red-glow);
     }
 
-    /* Simulation Action Bar (Play/Pause, Mode Toggles) */
+    /* Simulation Action Bar */
     .sim-actions {
       display: flex;
       gap: 0.6rem;
@@ -615,7 +614,7 @@
       cursor: crosshair;
     }
 
-    /* Ground Observer POV Window (Picture-in-Picture card) */
+    /* Ground Observer POV Window */
     .ground-pov-card {
       background: var(--bg-card);
       backdrop-filter: blur(14px);
@@ -654,7 +653,6 @@
       transition: background 0.4s ease;
     }
 
-    /* Sun disk in ground POV */
     .pov-sun-disc {
       position: absolute;
       width: 38px;
@@ -667,7 +665,6 @@
       transform: translateX(-50%);
     }
 
-    /* Horizon terrain silhouette */
     .pov-terrain {
       position: absolute;
       bottom: 0;
@@ -804,7 +801,314 @@
     }
 
     /* ==========================================================================
-       6. "TEST YOUR KNOWLEDGE" INTERACTIVE QUIZ
+       6. VIRTUAL LAB ACTIVITY: COLLOIDAL SULFUR EXPERIMENT (NCERT ACTIVITY 11.3)
+       ========================================================================== */
+    .lab-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .lab-card-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .lab-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 1.5rem;
+      margin-top: 1.25rem;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .lab-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .lab-visual-box {
+      background: #040814;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 250px;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .beaker-setup-diagram {
+      width: 100%;
+      height: 180px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+    }
+
+    /* Light source */
+    .lab-source {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Beaker tank */
+    .lab-beaker {
+      width: 220px;
+      height: 130px;
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      border-top: none;
+      border-radius: 0 0 16px 16px;
+      background: rgba(56, 189, 248, 0.05);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.5s ease;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .beaker-liquid {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 85%;
+      border-radius: 0 0 13px 13px;
+      background: rgba(56, 189, 248, 0.08);
+      transition: background 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Beam through beaker */
+    .beaker-beam {
+      position: absolute;
+      left: -20px;
+      right: -20px;
+      height: 16px;
+      background: linear-gradient(90deg, #ffffff, rgba(255, 255, 255, 0.8));
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+      transition: background 0.4s ease;
+    }
+
+    /* Target screen */
+    .lab-screen {
+      width: 24px;
+      height: 130px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+      flex-shrink: 0;
+    }
+
+    .screen-spot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+      transition: all 0.4s ease;
+    }
+
+    .lab-side-eye {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.78rem;
+      color: var(--blue-wavelength);
+      background: rgba(0, 0, 0, 0.6);
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-full);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      z-index: 5;
+    }
+
+    .lab-info-panel {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    /* ==========================================================================
+       7. BOARD EXAM Q&A QUESTION BANK (1-MARK, 2-MARK, 3/4-MARK ACCORDION)
+       ========================================================================== */
+    .exam-bank-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .exam-bank-header {
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .exam-bank-header h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-tag {
+      font-size: 0.82rem;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      padding: 0.3rem 0.8rem;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+    }
+
+    .qa-group {
+      margin-bottom: 1.75rem;
+    }
+
+    .qa-group-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--blue-wavelength);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .qa-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .qa-item {
+      background: rgba(14, 23, 46, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .qa-item:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .qa-question-btn {
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 0.9rem 1.1rem;
+      text-align: left;
+      color: var(--text-main);
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .qa-question-text {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .qa-arrow {
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      transition: transform 0.2s ease;
+    }
+
+    .qa-item.open .qa-arrow {
+      transform: rotate(180deg);
+      color: var(--blue-wavelength);
+    }
+
+    .qa-answer {
+      display: none;
+      padding: 0 1.1rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .qa-item.open .qa-answer {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .qa-answer-highlight {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .keyword-badge {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--blue-wavelength);
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      margin: 0.2rem 0.2rem 0.2rem 0;
+    }
+
+    /* ==========================================================================
+       8. "TEST YOUR KNOWLEDGE" INTERACTIVE QUIZ
        ========================================================================== */
     .quiz-section {
       background: var(--bg-card);
@@ -977,7 +1281,7 @@
     }
 
     /* ==========================================================================
-       7. MYTH BUSTER & REAL-WORLD PHENOMENA CARDS
+       9. MYTH BUSTER & REAL-WORLD PHENOMENA CARDS
        ========================================================================== */
     .fun-facts-grid {
       display: grid;
@@ -1046,7 +1350,7 @@
       <h1 class="hero-title">Scattering of Light in the Atmosphere</h1>
       <p class="hero-subtitle">
         Why is the daytime sky brilliant blue, while sunsets explode into fiery red and gold? 
-        Explore how atomic-scale interactions and the physics of wave optics shape our sky!
+        Explore how atomic-scale interactions, the Tyndall effect, and wave optics shape our atmosphere!
       </p>
 
       <!-- Conceptual Analogy Grid -->
@@ -1212,7 +1516,6 @@
 
       </section>
 
-
       <!-- RIGHT COLUMN: VISUAL CANVAS & OBSERVER POV -->
       <section class="sim-display-column" aria-label="Visual Demonstration Canvas">
 
@@ -1300,9 +1603,9 @@
           />
 
           <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-dim); font-family: var(--font-mono);">
-            <span>380 nm (Violet)</span>
+            <span>380 nm (Violet - Max Scatter)</span>
             <span>550 nm (Green)</span>
-            <span>750 nm (Deep Red)</span>
+            <span>750 nm (Deep Red - Min Scatter)</span>
           </div>
         </div>
 
@@ -1328,7 +1631,337 @@
       </div>
     </section>
 
-    <!-- 4. "TEST YOUR KNOWLEDGE" INTERACTIVE QUIZ -->
+    <!-- 4. VIRTUAL LAB ACTIVITY: COLLOIDAL SULFUR EXPERIMENT (NCERT ACTIVITY 11.3) -->
+    <section class="lab-card" aria-label="Colloidal Sulfur Laboratory Simulation">
+      <div class="lab-card-title">
+        <span>⚗️ Virtual Lab Activity: Sodium Thiosulfate & Sulfuric Acid</span>
+        <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">Class 10 Board Practical</span>
+      </div>
+
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        In the laboratory, dissolving <strong>sodium thiosulfate (hypo)</strong> in clean water and adding dilute <strong>sulfuric acid</strong> precipitates sub-microscopic sulfur particles. This famous experiment directly demonstrates how scattering produces both the blue sky and red sunset!
+      </p>
+
+      <div class="lab-layout">
+        <!-- Visual Beaker Setup -->
+        <div class="lab-visual-box">
+          <div class="lab-side-eye" id="labSideEye">
+            <span>👁️ Side View: <strong id="sideViewColor">Clear / Faint Blue</strong></span>
+          </div>
+
+          <div class="beaker-setup-diagram">
+            <!-- White Light Source -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+              <div class="lab-source" title="White Light Source">💡</div>
+              <span style="font-size: 0.68rem; color: var(--text-dim); font-weight: 600;">White Light</span>
+            </div>
+
+            <!-- Glass Beaker with Solution -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+              <div class="lab-beaker" id="labBeaker">
+                <div class="beaker-liquid" id="beakerLiquid"></div>
+                <div class="beaker-beam" id="beakerBeam"></div>
+              </div>
+              <span style="font-size: 0.68rem; color: var(--text-dim); font-weight: 600;">Na₂S₂O₃ + Dilute H₂SO₄ (Sulfur Precipitation)</span>
+            </div>
+
+            <!-- Transmitted Beam on Screen -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem;">
+              <div class="lab-screen">
+                <div class="screen-spot" id="screenSpot"></div>
+              </div>
+              <span style="font-size: 0.68rem; color: var(--text-dim); font-weight: 600;">Target Screen</span>
+            </div>
+          </div>
+
+          <!-- Bottom Status Caption -->
+          <div style="margin-top: 0.8rem; font-size: 0.82rem; font-family: var(--font-mono); color: var(--blue-wavelength);" id="labStageDisplay">
+            Stage 1 (0-1 min): Solution is clear. Beam passes through with little scattering.
+          </div>
+        </div>
+
+        <!-- Controls & Explanations -->
+        <div class="lab-info-panel">
+          <div class="control-header">
+            <span class="control-label">⏱️ Reaction Time:</span>
+            <span class="control-value" id="labTimeDisplay">0s</span>
+          </div>
+
+          <input 
+            type="range" 
+            id="labSlider" 
+            min="0" 
+            max="180" 
+            value="0" 
+            step="5"
+            aria-label="Reaction time in seconds"
+          />
+
+          <div style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-top: 0.5rem;" id="labExplanationText">
+            <strong>At Start (0s):</strong> The solution is pure and transparent. The light patch on the screen is bright white.
+          </div>
+
+          <div style="margin-top: 0.5rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle); font-size: 0.78rem; color: var(--text-dim);">
+            <strong>Exam Takeaway:</strong> 
+            <br>• <strong>Viewed from side:</strong> Appears <span style="color: var(--blue-wavelength); font-weight: 600;">BLUE</span> (simulates daytime sky).
+            <br>• <strong>Transmitted beam on screen:</strong> Shifts from yellow &rarr; orange &rarr; <span style="color: var(--red-wavelength); font-weight: 600;">CRIMSON RED</span> (simulates sunset!).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. BOARD EXAM Q&A QUESTION BANK (COVERING ALL EXAM QUESTIONS) -->
+    <section class="exam-bank-card" aria-label="Class 10 Board Exam Practice and Solutions">
+      <div class="exam-bank-header">
+        <h2>
+          <span>📝 Class 10 Board Exam Master Question Bank</span>
+        </h2>
+        <span class="section-tag">Click any question to reveal model answer & marking tips</span>
+      </div>
+
+      <!-- 1-Mark Questions -->
+      <div class="qa-group">
+        <div class="qa-group-title">
+          <span>🎯 1-Mark Questions (Objective & One-Word)</span>
+        </div>
+        <div class="qa-list">
+
+          <!-- Q1 -->
+          <div class="qa-item">
+            <button type="button" class="qa-question-btn">
+              <span class="qa-question-text">
+                <strong style="color: var(--blue-wavelength);">Q1.</strong>
+                <span>Which color in the visible spectrum undergoes the maximum scattering in our atmosphere?</span>
+              </span>
+              <span class="qa-arrow">▼</span>
+            </button>
+            <div class="qa-answer">
+              <p><span class="qa-answer-highlight">Model Answer:</span> <strong>Violet light</strong>.</p>
+              <p style="margin-top: 0.35rem;">
+                <em>Scientific Reason:</em> By Rayleigh's Law ($I \propto 1/\lambda^4$), scattering is greatest for the shortest wavelength. In the visible spectrum, violet has the shortest wavelength ($\sim 380\text{–}400\text{ nm}$) and therefore undergoes the maximum scattering. 
+                <br><em>Exam Tip:</em> While the sky appears blue (due to solar emission distribution and human eye cone sensitivity), <strong>violet</strong> is physically the color that scatters the most!
+              </p>
+              <div style="margin-top: 0.4rem;">
+                <span class="keyword-badge">Violet Light</span>
+                <span class="keyword-badge">Shortest Wavelength</span>
+                <span class="keyword-badge">1/λ⁴ Law</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="qa-item">
+            <button type="button" class="qa-question-btn">
+              <span class="qa-question-text">
+                <strong style="color: var(--blue-wavelength);">Q2.</strong>
+                <span>Name the phenomenon responsible for the path of light becoming visible when a beam of sunlight passes through a dusty room.</span>
+              </span>
+              <span class="qa-arrow">▼</span>
+            </button>
+            <div class="qa-answer">
+              <p><span class="qa-answer-highlight">Model Answer:</span> <strong>Tyndall Effect</strong>.</p>
+              <p style="margin-top: 0.35rem;">
+                <em>Explanation:</em> When a fine beam of sunlight enters a room through a tiny hole, dust and smoke particles suspended in the air act as colloidal particles and scatter the light beam in all directions, making its illuminated path clearly visible.
+              </p>
+              <div style="margin-top: 0.4rem;">
+                <span class="keyword-badge">Tyndall Effect</span>
+                <span class="keyword-badge">Colloidal Particles</span>
+                <span class="keyword-badge">Smoke & Dust</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="qa-item">
+            <button type="button" class="qa-question-btn">
+              <span class="qa-question-text">
+                <strong style="color: var(--blue-wavelength);">Q3.</strong>
+                <span>How is the intensity of scattered light related to its wavelength?</span>
+              </span>
+              <span class="qa-arrow">▼</span>
+            </button>
+            <div class="qa-answer">
+              <p><span class="qa-answer-highlight">Model Answer:</span> The intensity of scattered light is <strong>inversely proportional to the fourth power of its wavelength</strong> ($I \propto \frac{1}{\lambda^4}$).</p>
+              <p style="margin-top: 0.35rem;">
+                <em>Condition:</em> This relationship (Lord Rayleigh's Law) holds strictly true when the scattering particles are much smaller than the wavelength of light ($d \ll \lambda$).
+              </p>
+              <div style="margin-top: 0.4rem;">
+                <span class="keyword-badge">Rayleigh Scattering</span>
+                <span class="keyword-badge">I ∝ 1/λ⁴</span>
+                <span class="keyword-badge">Fourth Power</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="qa-item">
+            <button type="button" class="qa-question-btn">
+              <span class="qa-question-text">
+                <strong style="color: var(--blue-wavelength);">Q4.</strong>
+                <span>During a clear day, which particles in the atmosphere are responsible for scattering blue light?</span>
+              </span>
+              <span class="qa-arrow">▼</span>
+            </button>
+            <div class="qa-answer">
+              <p><span class="qa-answer-highlight">Model Answer:</span> <strong>Molecules of gases in air (primarily Nitrogen ($N_2$) and Oxygen ($O_2$))</strong>.</p>
+              <p style="margin-top: 0.35rem;">
+                <em>Key Characteristic:</em> These gas molecules have physical sizes smaller than the wavelength of visible light ($a \ll \lambda$), making them ideal Rayleigh scatterers for shorter blue wavelengths.
+              </p>
+              <div style="margin-top: 0.4rem;">
+                <span class="keyword-badge">Gas Molecules</span>
+                <span class="keyword-badge">Nitrogen (N₂) & Oxygen (O₂)</span>
+                <span class="keyword-badge">Size &lt;&lt; λ</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 2-Mark Questions -->
+      <div class="qa-group">
+        <div class="qa-group-title">
+          <span>🧠 2-Mark Questions (Reasoning & Short Answer)</span>
+        </div>
+        <div class="qa-list">
+
+          <!-- Q5 -->
+          <div class="qa-item">
+            <button type="button" class="qa-question-btn">
+              <span class="qa-question-text">
+                <strong style="color: var(--blue-wavelength);">Q5.</strong>
+                <span>"Danger" signals on roads and railways are always painted in red. Using your knowledge of scattering, explain why this color is chosen.</span>
+              </span>
+              <span class="qa-arrow">▼</span>
+            </button>
+            <div class="qa-answer">
+              <p><span class="qa-answer-highlight">Model Answer (2 Marks):</span></p>
+              <ol style="margin-left: 1.25rem; margin-top: 0.3rem;">
+                <li>Among all colors in the visible spectrum, <strong>red light has the longest wavelength</strong> ($\sim 700\text{ nm}$).</li>
+                <li>According to Rayleigh’s Law ($I \propto 1/\lambda^4$), <strong>red light is scattered the least</strong> by smoke, fog, and atmospheric dust. Therefore, it travels the maximum distance without attenuation and can be clearly seen from a great distance.</li>
+              </ol>
+              <div style="margin-top: 0.4rem;">
+                <span class="keyword-badge">Longest Wavelength (~700nm)</span>
+                <span class="keyword-badge">Least Scattered</span>
+                <span class="keyword-badge">Maximum Distance Penetration</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q6 -->
+          <div class="qa-item">
+            <button type="button" class="qa-question-btn">
+              <span class="qa-question-text">
+                <strong style="color: var(--blue-wavelength);">Q6.</strong>
+                <span>An astronaut looking out into space from the moon sees a completely black sky instead of a blue one. Explain the reason for this observation.</span>
+              </span>
+              <span class="qa-arrow">▼</span>
+            </button>
+            <div class="qa-answer">
+              <p><span class="qa-answer-highlight">Model Answer (2 Marks):</span></p>
+              <ol style="margin-left: 1.25rem; margin-top: 0.3rem;">
+                <li>The Moon has <strong>no atmosphere</strong> (it is in a vacuum).</li>
+                <li>Without atmospheric gas molecules or particles to intercept and scatter sunlight sideways into the astronaut's eyes, no scattered light reaches the retinas. Hence, the lunar sky appears completely <strong>dark and black</strong>, and stars remain visible even during daytime.</li>
+              </ol>
+              <div style="margin-top: 0.4rem;">
+                <span class="keyword-badge">No Atmosphere / Vacuum</span>
+                <span class="keyword-badge">No Scattering of Light</span>
+                <span class="keyword-badge">Pitch Black Sky</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q7 -->
+          <div class="qa-item">
+            <button type="button" class="qa-question-btn">
+              <span class="qa-question-text">
+                <strong style="color: var(--blue-wavelength);">Q7.</strong>
+                <span>State the relationship between the size of a scattering particle and the wavelength of light when all colors are scattered equally. Give a natural example where this occurs.</span>
+              </span>
+              <span class="qa-arrow">▼</span>
+            </button>
+            <div class="qa-answer">
+              <p><span class="qa-answer-highlight">Model Answer (2 Marks):</span></p>
+              <ol style="margin-left: 1.25rem; margin-top: 0.3rem;">
+                <li><strong>Relationship:</strong> When the size of the scattering particles ($d$) is <strong>much larger than the wavelength of light</strong> ($d \gg \lambda$), Rayleigh's wavelength dependency breaks down and all wavelengths of light are scattered almost equally.</li>
+                <li><strong>Natural Example:</strong> <strong>Clouds appear white</strong> (or thick fog/mist). The condensed water droplets and ice crystals inside clouds are much larger than visible light wavelengths ($\sim 1\text{ to }20\,\mu\text{m} \gg 0.4\text{–}0.7\,\mu\text{m}$), scattering all colors of the solar spectrum equally to combine into pure white light.</li>
+              </ol>
+              <div style="margin-top: 0.4rem;">
+                <span class="keyword-badge">Particle Size d &gt;&gt; λ</span>
+                <span class="keyword-badge">Equal Scattering of All Colors</span>
+                <span class="keyword-badge">White Clouds / Water Droplets</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 3 or 4-Mark Questions -->
+      <div class="qa-group">
+        <div class="qa-group-title">
+          <span>📊 3 or 4-Mark Questions (Descriptive & Analytical)</span>
+        </div>
+        <div class="qa-list">
+
+          <!-- Q8 -->
+          <div class="qa-item">
+            <button type="button" class="qa-question-btn">
+              <span class="qa-question-text">
+                <strong style="color: var(--blue-wavelength);">Q8.</strong>
+                <span>During sunrise and sunset, the sun appears in a striking red or orange color, whereas at noon, it appears mostly white. (a) Why near the horizon? (b) Why white at noon?</span>
+              </span>
+              <span class="qa-arrow">▼</span>
+            </button>
+            <div class="qa-answer">
+              <p><span class="qa-answer-highlight">Model Answer (3 Marks):</span></p>
+              <div style="margin-top: 0.4rem;">
+                <p><strong>(a) Red/Orange Appearance at Horizon (Sunrise/Sunset):</strong></p>
+                <p>Near the horizon, sunlight travels through a <strong>much thicker layer of atmosphere</strong> and a substantially longer distance. Most of the shorter wavelengths (blue and violet) are scattered away along this long trajectory before reaching our eyes. Only the least scattered, longer wavelengths—<strong>red and orange</strong>—penetrate directly to the observer, making the sun look red/orange.</p>
+              </div>
+              <div style="margin-top: 0.6rem;">
+                <p><strong>(b) White Appearance at Noon:</strong></p>
+                <p>When the sun is directly overhead at noon, light travels a <strong>relatively short distance</strong> through the atmosphere (approx 1 air mass). Only a very tiny fraction of blue and violet light gets scattered out. Since virtually all visible wavelengths reach our retinas directly and in nearly equal proportions, the sun appears <strong>white</strong> (or very pale yellow).</p>
+              </div>
+              <div style="margin-top: 0.4rem;">
+                <span class="keyword-badge">Horizon: Long Air Path</span>
+                <span class="keyword-badge">Blue Scattered Away</span>
+                <span class="keyword-badge">Noon: Shortest Path</span>
+                <span class="keyword-badge">All Colors Reach Eye = White</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q9 -->
+          <div class="qa-item">
+            <button type="button" class="qa-question-btn">
+              <span class="qa-question-text">
+                <strong style="color: var(--blue-wavelength);">Q9.</strong>
+                <span>A teacher sets up a lab experiment passing light through sodium thiosulfate + dilute sulfuric acid to precipitate fine sulfur particles. (a) Side view color? (b) Natural phenomenon simulated? (c) Exiting beam color?</span>
+              </span>
+              <span class="qa-arrow">▼</span>
+            </button>
+            <div class="qa-answer">
+              <p><span class="qa-answer-highlight">Model Answer (3 Marks - CBSE Practical Activity 11.3):</span></p>
+              <ol style="margin-left: 1.25rem; margin-top: 0.3rem;">
+                <li><strong>(a) Viewed from the side of the beaker:</strong> The solution appears <strong>BLUE</strong>. As colloidal sulfur particles begin to precipitate, their sub-microscopic size ($d \ll \lambda$) causes Rayleigh scattering, scattering the short blue wavelengths in all directions toward the side observer.</li>
+                <li><strong>(b) Natural phenomenon simulated:</strong> It simulates <strong>atmospheric scattering of sunlight</strong>—specifically why the <strong>sky is blue</strong> (side view) and why <strong>sunsets and sunrises are red</strong> (transmitted end view).</li>
+                <li><strong>(c) Color of exiting beam on the screen:</strong> The transmitted light shifts from orange to <strong>INTENSE CRIMSON RED</strong>. Because the blue wavelengths have been scattered out along the length of the beaker, only the unscattered long red wavelengths survive to exit the end of the beaker onto the screen.</li>
+              </ol>
+              <div style="margin-top: 0.4rem;">
+                <span class="keyword-badge">Side View: Blue Sky</span>
+                <span class="keyword-badge">Screen / End View: Red Sunset</span>
+                <span class="keyword-badge">Colloidal Sulfur Precipitation</span>
+                <span class="keyword-badge">Activity 11.3</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. "TEST YOUR KNOWLEDGE" INTERACTIVE QUIZ -->
     <section class="quiz-section" aria-label="Interactive Physics Quiz">
       <div class="quiz-header">
         <h2>
@@ -1433,24 +2066,31 @@
       </div>
     </section>
 
-    <!-- 5. PHYSICS MYTH BUSTERS & EXTENSIONS -->
+    <!-- 7. PHYSICS MYTH BUSTERS & EXTENSIONS -->
     <section class="fun-facts-grid" aria-label="Mythbusters and Real-World Applications">
       
       <div class="fact-card">
-        <h3>🟣 Why Isn't the Sky Violet?</h3>
+        <h3>💡 The Tyndall Effect</h3>
         <p>
-          Violet light has an even shorter wavelength (~380-400 nm) than blue light and scatters even more fiercely! So why don't we see a purple sky? 
-          Two reasons: First, sunlight has far fewer violet photons than blue ones. 
-          Second, human retinas have three color receptors (cones), and our eyes are significantly more sensitive to blue and green than to violet!
+          Named after John Tyndall, this is the phenomenon where the path of light becomes visible as it scatters off suspended <strong>colloidal particles</strong> (such as dust, smoke, or water droplets). 
+          Classic examples include a sunbeam slicing through a dusty attic or sunlight piercing through the misty canopy of a dense rainforest!
         </p>
       </div>
 
       <div class="fact-card">
-        <h3>☁️ Why Are Clouds White? (Mie Scattering)</h3>
+        <h3>📐 Particle Size Rule: Fine vs. Large</h3>
         <p>
-          Clouds are composed of liquid water droplets that are hundreds of times <em>larger</em> than the wavelength of light. 
-          When particles are large, they enter <strong>Mie Scattering</strong>, which scatters all colors of light equally! 
-          When all colors scatter together in equal proportions, we see pure white.
+          • <strong>When $d \ll \lambda$ (Very fine molecules like $N_2, O_2$):</strong> Rayleigh scattering dominates ($I \propto 1/\lambda^4$), vigorously scattering blue light.
+          <br>• <strong>When $d \gg \lambda$ (Large particles like cloud droplets):</strong> All colors of light are scattered equally, making clouds, fog, and smoke appear white or grayish!
+        </p>
+      </div>
+
+      <div class="fact-card">
+        <h3>🟣 Why Isn't the Sky Violet?</h3>
+        <p>
+          Violet light has the shortest wavelength (~380-400 nm) in the visible spectrum and scatters most fiercely! So why don't we see a purple sky? 
+          Two reasons: First, the solar spectrum has far fewer violet photons than blue ones. 
+          Second, human retinas are significantly more sensitive to blue and green than to violet!
         </p>
       </div>
 
@@ -1473,7 +2113,8 @@
 
   <!-- ==========================================================================
        JAVASCRIPT LOGIC & SIMULATION ENGINE
-       ========================================================================== -->
+       ========================================================================== */
+  -->
   <script>
     (function() {
       'use strict';
@@ -1490,6 +2131,8 @@
         showRayBreakdown: false,
         // Wavelength Explorer state (in nm)
         selectedWavelength: 450,
+        // Virtual Lab Reaction Time (0 to 180s)
+        labTime: 0,
         // Quiz state
         quizScore: 0,
         answeredQuestions: new Set()
@@ -1540,6 +2183,16 @@
       const ratioFormula = document.getElementById('ratioFormula');
       const multiplierBig = document.getElementById('multiplierBig');
 
+      // Virtual Lab Elements
+      const labSlider = document.getElementById('labSlider');
+      const labTimeDisplay = document.getElementById('labTimeDisplay');
+      const beakerLiquid = document.getElementById('beakerLiquid');
+      const beakerBeam = document.getElementById('beakerBeam');
+      const screenSpot = document.getElementById('screenSpot');
+      const labStageDisplay = document.getElementById('labStageDisplay');
+      const labExplanationText = document.getElementById('labExplanationText');
+      const sideViewColor = document.getElementById('sideViewColor');
+
       // Canvas
       const canvas = document.getElementById('physicsCanvas');
       const ctx = canvas.getContext('2d');
@@ -1577,16 +2230,10 @@
         }
 
         reset(initialSpread = false) {
-          // Progress along direct beam from Sun (0) to Observer (1)
           this.t = initialSpread ? Math.random() : 0;
           this.speed = 0.005 + Math.random() * 0.003;
           this.isScattered = false;
-
-          // Color type: 'blue' or 'red'
-          // White light has mixture: ~50% blue-violet, ~50% red-orange
           this.isBlue = Math.random() < 0.55;
-
-          // Scattered movement vector
           this.scatterX = 0;
           this.scatterY = 0;
           this.scatterVx = 0;
@@ -1598,16 +2245,12 @@
           if (!this.isScattered) {
             this.t += this.speed;
 
-            // Check if particle is inside atmospheric layer (t > 0.45)
             if (atmosphereActive && this.t > 0.45 && this.t < 0.98) {
-              // Rayleigh scattering probability per tick
-              // Blue light scatters ~9.4x more than red
               const baseScatterProb = this.isBlue ? 0.038 : 0.0038;
               const prob = baseScatterProb * pathLengthFactor * state.atmosphereDensity;
 
               if (Math.random() < prob) {
                 this.isScattered = true;
-                // Scatter in random omnidirectional angle (dipole scattering)
                 const angle = Math.random() * Math.PI * 2;
                 const v = 1.2 + Math.random() * 1.8;
                 this.scatterVx = Math.cos(angle) * v;
@@ -1620,7 +2263,6 @@
               this.reset(false);
             }
           } else {
-            // Scattered particle flies off in the atmosphere
             this.scatterX += this.scatterVx;
             this.scatterY += this.scatterVy;
             this.scatterOpacity -= 0.02;
@@ -1632,7 +2274,6 @@
         }
       }
 
-      // Initialize particles
       for (let i = 0; i < MAX_PARTICLES; i++) {
         particles.push(new PhotonParticle());
       }
@@ -1641,22 +2282,14 @@
          ASTRONOMY & PHYSICS CALCULATIONS
          ------------------------------------------------------------------------ */
       function getPhysicsModel() {
-        // timeOfDay: 0 -> 100
-        // Maps to Sun Elevation angle theta from ~85° (Noon) down to ~2° (Sunset)
-        const sunAngleDeg = 85 - (state.timeOfDay / 100) * 83; // 85 deg down to 2 deg
+        const sunAngleDeg = 85 - (state.timeOfDay / 100) * 83;
         const sunAngleRad = (sunAngleDeg * Math.PI) / 180;
 
-        // Effective optical air mass path length (Kasten and Young formulation approximation)
-        // At 90 deg: path = 1.0x. At 2 deg: path approaches ~20-30x
         let airMass = 1.0 / (Math.sin(sunAngleRad) + 0.05064 * Math.pow(sunAngleDeg + 4.49, -1.6364));
         airMass = Math.max(1.0, Math.min(28.0, airMass));
 
-        // Atmospheric density factor
         const effectiveAirMass = airMass * state.atmosphereDensity;
 
-        // Direct beam survival rate (Beer-Lambert-Bouguer Law)
-        // I = I0 * exp(-tau * airMass)
-        // tau_blue ~ 0.12, tau_red ~ 0.012
         let blueSurvival = Math.exp(-0.11 * effectiveAirMass);
         let redSurvival = Math.exp(-0.012 * effectiveAirMass);
 
@@ -1678,7 +2311,6 @@
       /* ------------------------------------------------------------------------
          RENDER LOOP
          ------------------------------------------------------------------------ */
-      // Starfield background cache
       const stars = [];
       for (let i = 0; i < 70; i++) {
         stars.push({
@@ -1694,11 +2326,9 @@
 
         const model = getPhysicsModel();
 
-        // 1. Draw Space background & stars
         ctx.fillStyle = '#050914';
         ctx.fillRect(0, 0, viewWidth, viewHeight);
 
-        // Stars (brighter if atmosphere density is 0, dimmer at noon)
         const starBrightness = state.atmosphereDensity === 0 ? 0.9 : (state.timeOfDay > 80 ? 0.6 : 0.2);
         for (const star of stars) {
           ctx.beginPath();
@@ -1707,43 +2337,34 @@
           ctx.fill();
         }
 
-        // Geometry: Earth center and radii
-        // Place Earth center below the canvas so observer sits nicely at top
         const earthCenterX = viewWidth * 0.5;
         const earthRadius = Math.min(viewWidth, viewHeight) * 1.1;
         const earthCenterY = viewHeight * 0.95 + earthRadius;
-        const atmosHeight = 110; // Stylized atmosphere shell thickness
+        const atmosHeight = 110;
         const atmosRadius = earthRadius + atmosHeight;
 
-        // Observer position at the top apex of Earth
         const obsX = earthCenterX;
         const obsY = earthCenterY - earthRadius;
 
-        // Atmosphere Shell Outer Glow & Scatter Illumination
         if (state.atmosphereDensity > 0) {
           const atmosGrad = ctx.createRadialGradient(
             earthCenterX, earthCenterY, earthRadius,
             earthCenterX, earthCenterY, atmosRadius + 15
           );
 
-          // Atmosphere color shifts based on time of day
           if (state.atmosphereDensity > 1.5) {
-            // Smog / Pollution
             atmosGrad.addColorStop(0, 'rgba(168, 120, 80, 0.4)');
             atmosGrad.addColorStop(0.7, 'rgba(120, 80, 60, 0.2)');
             atmosGrad.addColorStop(1, 'rgba(60, 40, 30, 0)');
           } else if (state.timeOfDay < 45) {
-            // Midday azure glow
             atmosGrad.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
             atmosGrad.addColorStop(0.7, 'rgba(30, 144, 255, 0.25)');
             atmosGrad.addColorStop(1, 'rgba(14, 165, 233, 0)');
           } else if (state.timeOfDay < 75) {
-            // Late afternoon golden-blue
             atmosGrad.addColorStop(0, 'rgba(251, 191, 36, 0.35)');
             atmosGrad.addColorStop(0.5, 'rgba(56, 189, 248, 0.25)');
             atmosGrad.addColorStop(1, 'rgba(14, 165, 233, 0)');
           } else {
-            // Sunset fiery gradient
             atmosGrad.addColorStop(0, 'rgba(239, 68, 68, 0.5)');
             atmosGrad.addColorStop(0.4, 'rgba(249, 115, 22, 0.4)');
             atmosGrad.addColorStop(0.7, 'rgba(99, 102, 241, 0.2)');
@@ -1756,7 +2377,6 @@
           ctx.fill();
         }
 
-        // Atmosphere shell boundary line
         ctx.beginPath();
         ctx.arc(earthCenterX, earthCenterY, atmosRadius, 0, Math.PI * 2);
         ctx.strokeStyle = state.atmosphereDensity > 0 ? 'rgba(56, 189, 248, 0.25)' : 'rgba(255, 255, 255, 0.08)';
@@ -1765,33 +2385,24 @@
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Label: Top of Atmosphere
         ctx.fillStyle = 'rgba(148, 163, 184, 0.7)';
         ctx.font = '11px system-ui, sans-serif';
         ctx.fillText('Top of Atmosphere (Space Boundary)', earthCenterX - 95, obsY - atmosHeight + 14);
 
-        // 2. Calculate Sun Position in space
-        // Orbital arc based on timeOfDay
-        // Noon: high up slightly right/left. Sunset: low at left horizon.
         const orbitRadius = atmosRadius + 85;
         const elevation = model.sunAngleRad;
         
-        // Let's place the sun on an arc towards the left
         const sunX = earthCenterX - Math.cos(elevation) * orbitRadius;
         const sunY = earthCenterY - Math.sin(elevation) * orbitRadius;
 
-        // Draw Sun Beam Centerline / Light Cone
         const beamDx = obsX - sunX;
         const beamDy = obsY - sunY;
         const beamDist = Math.hypot(beamDx, beamDy);
 
-        // Find intersection of beam with atmosphere outer boundary
-        // For visual clarity, entry point is approx at fraction along beam
         const entryFraction = Math.max(0.35, 1 - (atmosHeight / beamDist) * 1.5);
         const entryX = sunX + beamDx * entryFraction;
         const entryY = sunY + beamDy * entryFraction;
 
-        // Atmospheric path line
         ctx.beginPath();
         ctx.moveTo(entryX, entryY);
         ctx.lineTo(obsX, obsY);
@@ -1800,7 +2411,6 @@
         ctx.lineCap = 'round';
         ctx.stroke();
 
-        // 3. Update & Draw Photon Particles
         if (state.isPlaying) {
           for (const p of particles) {
             p.update(model.airMass, state.atmosphereDensity > 0);
@@ -1809,16 +2419,13 @@
 
         for (const p of particles) {
           if (!p.isScattered) {
-            // Particle moving straight along beam from Sun to Observer
             const px = sunX + beamDx * p.t;
             const py = sunY + beamDy * p.t;
 
-            // Color: Blue or Red
             let color;
             if (state.showRayBreakdown) {
               color = p.isBlue ? '#38bdf8' : '#ef4444';
             } else {
-              // In space (before atmosphere), photons look crisp white/yellow
               if (p.t < entryFraction || state.atmosphereDensity === 0) {
                 color = '#ffffff';
               } else {
@@ -1834,8 +2441,6 @@
             ctx.fill();
             ctx.shadowBlur = 0;
           } else {
-            // Scattered particle flying in random direction
-            // Position relative to scatter point along beam
             const px = (sunX + beamDx * p.t) + p.scatterX;
             const py = (sunY + beamDy * p.t) + p.scatterY;
 
@@ -1849,14 +2454,13 @@
           }
         }
 
-        // 4. Draw Earth Body
         const earthGrad = ctx.createRadialGradient(
           earthCenterX, earthCenterY, 0,
           earthCenterX, earthCenterY, earthRadius
         );
         earthGrad.addColorStop(0.7, '#0f2744');
         earthGrad.addColorStop(0.95, '#1e3a8a');
-        earthGrad.addColorStop(1, '#10b981'); // Green surface crust
+        earthGrad.addColorStop(1, '#10b981');
 
         ctx.beginPath();
         ctx.arc(earthCenterX, earthCenterY, earthRadius, 0, Math.PI * 2);
@@ -1866,12 +2470,9 @@
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // 5. Draw Ground Observer
-        // Observer base on Earth surface
         ctx.save();
         ctx.translate(obsX, obsY);
 
-        // Local Horizon line
         ctx.beginPath();
         ctx.moveTo(-45, 0);
         ctx.lineTo(45, 0);
@@ -1879,20 +2480,17 @@
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        // Little stylized person
-        // Head
         ctx.beginPath();
         ctx.arc(0, -22, 4.5, 0, Math.PI * 2);
         ctx.fillStyle = '#fbbf24';
         ctx.fill();
-        // Body
+
         ctx.beginPath();
         ctx.moveTo(0, -17);
         ctx.lineTo(0, -6);
         ctx.lineTo(-4, 0);
         ctx.moveTo(0, -6);
         ctx.lineTo(4, 0);
-        // Arms pointing up / looking at sky
         ctx.moveTo(-6, -11);
         ctx.lineTo(0, -14);
         ctx.lineTo(6, -11);
@@ -1900,15 +2498,12 @@
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // "You (Observer)" label
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 11px system-ui, sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText('Observer', 0, 16);
         ctx.restore();
 
-        // 6. Draw The Sun
-        // Sun glow
         const sunGlow = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, 48);
         sunGlow.addColorStop(0, 'rgba(255, 255, 255, 1)');
         sunGlow.addColorStop(0.3, 'rgba(251, 191, 36, 0.8)');
@@ -1920,13 +2515,11 @@
         ctx.fillStyle = sunGlow;
         ctx.fill();
 
-        // Sun Core
         ctx.beginPath();
         ctx.arc(sunX, sunY, 15, 0, Math.PI * 2);
         ctx.fillStyle = '#fffdf0';
         ctx.fill();
 
-        // Direct line from sun to observer indicator
         ctx.beginPath();
         ctx.moveTo(sunX, sunY);
         ctx.lineTo(obsX, obsY);
@@ -1936,28 +2529,22 @@
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Telemetry annotations on canvas
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 12px system-ui, sans-serif';
         ctx.textAlign = 'left';
         ctx.fillText(`☀️ Incoming Solar Beam (${Math.round(model.sunAngleDeg)}° Elevation)`, sunX + 22, sunY - 10);
 
-        // Path indicator badge on canvas
         const midPathX = (entryX + obsX) * 0.5;
         const midPathY = (entryY + obsY) * 0.5;
         ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         ctx.fillRect(midPathX + 15, midPathY - 14, 130, 26);
-        ctx.strokeStyle = varColor('--border-accent');
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
         ctx.strokeRect(midPathX + 15, midPathY - 14, 130, 26);
-        ctx.fillStyle = varColor('--blue-wavelength');
+        ctx.fillStyle = '#38bdf8';
         ctx.font = '11px monospace';
         ctx.fillText(`Path: ${model.airMass.toFixed(1)}× thickness`, midPathX + 22, midPathY + 3);
 
         requestAnimationFrame(drawScene);
-      }
-
-      function varColor(variableName) {
-        return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
       }
 
       requestAnimationFrame(drawScene);
@@ -1966,12 +2553,10 @@
          SYNCHRONIZED UI UPDATES (TELEMETRY & OBSERVER POV)
          ------------------------------------------------------------------------ */
       function updateSimulationUI() {
-        // Sync slider fill CSS progress
         timeSlider.style.setProperty('--slider-progress', `${timeSlider.value}%`);
 
         const model = getPhysicsModel();
 
-        // 1. Time display
         let timeString = '12:00 PM (Noon)';
         if (state.timeOfDay < 25) {
           timeString = '12:00 PM (High Noon)';
@@ -1986,12 +2571,10 @@
         }
         timeValDisplay.textContent = timeString;
 
-        // 2. Telemetry metrics
         elevationBadge.textContent = `Zenith: ${Math.round(model.sunAngleDeg)}°`;
         pathMultiplierDisplay.textContent = `${model.airMass.toFixed(1)}×`;
         pathKmDisplay.textContent = `~${Math.round(12 * model.airMass)} km of air`;
 
-        // Percentage survival
         const blueSurvPct = Math.round(model.blueSurvival * 100);
         const redSurvPct = Math.round(model.redSurvival * 100);
 
@@ -2001,10 +2584,8 @@
         blueBar.style.width = `${blueSurvPct}%`;
         redBar.style.width = `${redSurvPct}%`;
 
-        // 3. Observer POV Window Styling
         updateObserverPOV(model);
 
-        // Update active preset buttons
         presetNoon.classList.toggle('active', state.timeOfDay <= 25);
         presetAfternoon.classList.toggle('active', state.timeOfDay > 25 && state.timeOfDay < 80);
         presetSunset.classList.toggle('active', state.timeOfDay >= 80);
@@ -2014,7 +2595,6 @@
         sunAltitudeLabel.textContent = `Sun Elevation: ${Math.round(model.sunAngleDeg)}°`;
 
         if (state.atmosphereDensity === 0) {
-          // Lunar / Space condition
           povWindow.style.background = '#02040a';
           povSunDisc.style.background = '#ffffff';
           povSunDisc.style.boxShadow = '0 0 25px rgba(255, 255, 255, 0.9)';
@@ -2026,7 +2606,6 @@
         }
 
         if (state.atmosphereDensity > 1.5) {
-          // Heavy Smog / Pollution (Mie scattering dominant)
           povWindow.style.background = 'linear-gradient(to bottom, #4a3b32 0%, #7c5e48 60%, #9a3412 100%)';
           povSunDisc.style.background = '#dc2626';
           povSunDisc.style.boxShadow = '0 0 15px rgba(220, 38, 38, 0.6)';
@@ -2037,13 +2616,11 @@
           return;
         }
 
-        // Standard Earth Atmosphere progression
         const t = state.timeOfDay / 100;
         const sunElevPercent = (model.sunAngleDeg / 90);
         povSunDisc.style.bottom = `${12 + sunElevPercent * 58}px`;
 
         if (t < 0.35) {
-          // Midday Noon
           povWindow.style.background = 'linear-gradient(to bottom, #0284c7 0%, #38bdf8 65%, #bae6fd 100%)';
           povSunDisc.style.background = '#ffffff';
           povSunDisc.style.boxShadow = '0 0 35px rgba(255, 255, 255, 0.95), 0 0 60px rgba(56, 189, 248, 0.5)';
@@ -2051,7 +2628,6 @@
           observerStatusBadge.style.color = 'var(--blue-wavelength)';
           povExplanation.innerHTML = `<strong>Midday (Short Path):</strong> Sunlight punches straight down through the thin atmosphere. Blue light scatters throughout the entire sky dome, while the direct beam reaching your eyes retains plenty of light, making the Sun look bright yellowish-white.`;
         } else if (t < 0.75) {
-          // Late Afternoon / Golden Hour
           povWindow.style.background = 'linear-gradient(to bottom, #1e40af 0%, #3b82f6 40%, #fbbf24 85%, #f97316 100%)';
           povSunDisc.style.background = '#fef08a';
           povSunDisc.style.boxShadow = '0 0 30px rgba(251, 191, 36, 0.8), 0 0 50px rgba(249, 115, 22, 0.4)';
@@ -2059,7 +2635,6 @@
           observerStatusBadge.style.color = 'var(--solar-yellow)';
           povExplanation.innerHTML = `<strong>Late Afternoon:</strong> As the Sun drops lower, its rays travel through more air. Blue light begins scattering out of the direct beam, leaving warmer golden and amber tones.`;
         } else {
-          // Sunset
           povWindow.style.background = 'linear-gradient(to bottom, #1e1b4b 0%, #4c1d95 30%, #b91c1c 65%, #ea580c 85%, #fbbf24 100%)';
           povSunDisc.style.background = '#ef4444';
           povSunDisc.style.boxShadow = '0 0 30px rgba(239, 68, 68, 0.9), 0 0 60px rgba(249, 115, 22, 0.6)';
@@ -2077,7 +2652,6 @@
         updateSimulationUI();
       });
 
-      // Presets
       presetNoon.addEventListener('click', () => {
         state.timeOfDay = 10;
         timeSlider.value = 10;
@@ -2096,7 +2670,6 @@
         updateSimulationUI();
       });
 
-      // Atmosphere Density segmented buttons
       const densityButtons = [densityNone, densityNormal, densitySmog];
       densityButtons.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -2116,7 +2689,6 @@
         });
       });
 
-      // Play/Pause
       togglePlayBtn.addEventListener('click', () => {
         state.isPlaying = !state.isPlaying;
         togglePlayBtn.classList.toggle('active', state.isPlaying);
@@ -2124,7 +2696,6 @@
         playText.textContent = state.isPlaying ? 'Pause Photons' : 'Resume Photons';
       });
 
-      // Ray Breakdown toggle
       toggleRayModeBtn.addEventListener('click', () => {
         state.showRayBreakdown = !state.showRayBreakdown;
         toggleRayModeBtn.classList.toggle('active', state.showRayBreakdown);
@@ -2138,22 +2709,19 @@
         waveNmDisplay.textContent = `${wavelength} nm`;
         lambdaVal.textContent = `${wavelength} × 10⁻⁹ m`;
 
-        // Calculate frequency: f = c / lambda
-        const c = 3.0e8; // m/s
+        const c = 3.0e8;
         const freq = (c / (wavelength * 1e-9)).toExponential(2);
         freqVal.textContent = `${freq} Hz`;
 
-        // Rayleigh factor relative to Red (700 nm): (700 / lambda)^4
         const ratio = Math.pow(700 / wavelength, 4);
         ratioFormula.textContent = `(700 / ${wavelength})⁴ = ${ratio.toFixed(2)}×`;
         multiplierBig.textContent = `${ratio.toFixed(1)}× Scattering`;
 
-        // Color name and indicator dot placement
         let colorName = 'Blue Light';
         let hexColor = '#38bdf8';
 
         if (wavelength < 420) {
-          colorName = 'Violet Light';
+          colorName = 'Violet Light (Maximum Scattering)';
           hexColor = '#a855f7';
         } else if (wavelength < 480) {
           colorName = 'Blue Light';
@@ -2171,25 +2739,90 @@
           colorName = 'Orange Light';
           hexColor = '#f97316';
         } else {
-          colorName = 'Red Light';
+          colorName = 'Red Light (Minimum Scattering)';
           hexColor = '#ef4444';
         }
 
         waveColorName.textContent = `Selected: ${colorName}`;
         multiplierBig.style.color = hexColor;
 
-        // Position of indicator on bar (380 to 750)
         const percent = ((wavelength - 380) / (750 - 380)) * 100;
         waveIndicatorDot.style.left = `${percent}%`;
         waveIndicatorDot.style.backgroundColor = hexColor;
 
-        // Sync slider fill CSS
         waveSlider.style.setProperty('--slider-progress', `${percent}%`);
         waveSlider.style.setProperty('--slider-fill-color', hexColor);
       }
 
       waveSlider.addEventListener('input', (e) => {
         updateWavelengthInspector(parseInt(e.target.value, 10));
+      });
+
+      /* ------------------------------------------------------------------------
+         VIRTUAL LAB SIMULATION (NCERT ACTIVITY 11.3)
+         ------------------------------------------------------------------------ */
+      function updateLabSimulation(seconds) {
+        state.labTime = seconds;
+        labTimeDisplay.textContent = `${seconds}s`;
+        labSlider.style.setProperty('--slider-progress', `${(seconds / 180) * 100}%`);
+
+        if (seconds < 30) {
+          // Stage 0: Initial clear solution
+          beakerLiquid.style.background = 'rgba(56, 189, 248, 0.05)';
+          beakerBeam.style.background = 'linear-gradient(90deg, #ffffff, rgba(255, 255, 255, 0.9))';
+          screenSpot.style.background = '#ffffff';
+          screenSpot.style.boxShadow = '0 0 16px rgba(255, 255, 255, 0.9)';
+          sideViewColor.textContent = 'Clear Transparent (No Scattering)';
+          sideViewColor.style.color = '#94a3b8';
+          labStageDisplay.textContent = 'Stage 1 (0s - 30s): Sulfur has not yet precipitated. Light travels straight through.';
+          labExplanationText.innerHTML = '<strong>Transparent Solution:</strong> Molecules are in true solution. The light patch on the screen is circular and brilliant white.';
+        } else if (seconds < 90) {
+          // Stage 1: Fine sulfur precipitates (Rayleigh scattering active)
+          const blueIntensity = (seconds - 30) / 60;
+          beakerLiquid.style.background = `rgba(56, 189, 248, ${0.1 + blueIntensity * 0.45})`;
+          beakerBeam.style.background = 'linear-gradient(90deg, #ffffff, #fef08a 60%, #fbbf24 100%)';
+          screenSpot.style.background = '#fef08a';
+          screenSpot.style.boxShadow = '0 0 18px rgba(254, 240, 138, 0.8)';
+          sideViewColor.textContent = 'Glowing Blue (Blue Sky Simulation)';
+          sideViewColor.style.color = 'var(--blue-wavelength)';
+          labStageDisplay.textContent = 'Stage 2 (30s - 90s): Sub-microscopic sulfur particles form. Blue light scatters sideways!';
+          labExplanationText.innerHTML = '<strong>Blue Scattering:</strong> Fine sulfur particles ($d \\ll \\lambda$) form. Viewed from the three sides of the beaker, the solution turns <strong>glowing blue</strong> (simulating our blue sky!). The transmitted beam shifts toward warm yellow.';
+        } else if (seconds < 140) {
+          // Stage 2: Orange transmitted
+          beakerLiquid.style.background = 'rgba(56, 189, 248, 0.55)';
+          beakerBeam.style.background = 'linear-gradient(90deg, #ffffff, #fb923c 60%, #ea580c 100%)';
+          screenSpot.style.background = '#f97316';
+          screenSpot.style.boxShadow = '0 0 20px rgba(249, 115, 22, 0.9)';
+          sideViewColor.textContent = 'Deep Blue / Opaque';
+          sideViewColor.style.color = '#38bdf8';
+          labStageDisplay.textContent = 'Stage 3 (90s - 140s): Direct blue light is filtered away. Transmitted light turns Orange.';
+          labExplanationText.innerHTML = '<strong>Orange Horizon:</strong> As more blue photons scatter out of the beam, the transmitted light hitting the screen turns <strong>bright orange</strong> (simulating late afternoon/early sunset).';
+        } else {
+          // Stage 3: Crimson red sunset
+          beakerLiquid.style.background = 'rgba(30, 58, 138, 0.65)';
+          beakerBeam.style.background = 'linear-gradient(90deg, #ffffff, #ef4444 60%, #b91c1c 100%)';
+          screenSpot.style.background = '#ef4444';
+          screenSpot.style.boxShadow = '0 0 22px rgba(239, 68, 68, 0.95)';
+          sideViewColor.textContent = 'Bluish-Grey / Murky';
+          sideViewColor.style.color = '#94a3b8';
+          labStageDisplay.textContent = 'Stage 4 (140s - 180s): Only long red wavelengths make it through. Crimson Red spot!';
+          labExplanationText.innerHTML = '<strong>Crimson Sunset:</strong> The path through the beaker has filtered out virtually all blue and green wavelengths. The light exiting the end of the beaker forms a <strong>striking crimson red patch</strong> on the screen—exactly like sunset!';
+        }
+      }
+
+      labSlider.addEventListener('input', (e) => {
+        updateLabSimulation(parseInt(e.target.value, 10));
+      });
+
+      /* ------------------------------------------------------------------------
+         BOARD EXAM Q&A ACCORDION
+         ------------------------------------------------------------------------ */
+      const qaItems = document.querySelectorAll('.qa-item');
+      qaItems.forEach(item => {
+        const btn = item.querySelector('.qa-question-btn');
+        btn.addEventListener('click', () => {
+          item.classList.toggle('open');
+        });
       });
 
       /* ------------------------------------------------------------------------
@@ -2227,7 +2860,6 @@
 
             const isCorrect = btn.dataset.correct === 'true';
 
-            // Disable all options for this question
             options.forEach(b => {
               b.disabled = true;
               if (b.dataset.correct === 'true') {
@@ -2285,6 +2917,7 @@
          ------------------------------------------------------------------------ */
       updateSimulationUI();
       updateWavelengthInspector(450);
+      updateLabSimulation(0);
 
     })();
   </script>
